@@ -102,6 +102,10 @@
   .m-actions{display:flex;align-items:center;gap:8px;flex:none}
   .m-remove{background:none;color:var(--ink-faint);font-size:22px;line-height:1;padding:4px 10px;border-radius:8px}
   .m-remove:hover{color:var(--high);background:rgba(239,106,106,.1)}
+  .m-adjust{margin-top:8px;font-size:13.5px;font-weight:600;padding:8px 12px;border-radius:8px;line-height:1.5}
+  .m-adjust.warn{color:#f3e3c4;background:rgba(240,180,65,.1);border:1px solid rgba(240,180,65,.3)}
+  .m-adjust.bad{color:#f5cccc;background:rgba(239,106,106,.1);border:1px solid rgba(239,106,106,.3)}
+  .m-adjust-label{font-size:11px;font-weight:800;letter-spacing:.05em;padding:2px 7px;border-radius:5px;background:rgba(255,255,255,.12);margin-right:6px;vertical-align:middle}
   .m-mark{font-size:13px;font-weight:800;letter-spacing:.04em}
   .m-mark.ok{color:var(--ok)}
   .m-mark.warn{color:var(--low)}
@@ -179,9 +183,36 @@
   .done-screen{text-align:center;padding:18px 8px}
   .done-screen .big{font-size:52px;margin-bottom:8px}
   .done-screen h2{color:var(--ok);letter-spacing:.08em;border:0;font-size:22px;margin:0 0 10px}
-  .done-list{text-align:left;max-width:440px;margin:22px auto 0;display:flex;flex-direction:column;gap:8px}
-  .done-list div{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:12px 14px;background:var(--panel-2);border-radius:10px}
-  .done-list .nm{font-weight:800}
+  .done-list{text-align:left;max-width:480px;margin:22px auto 0;display:flex;flex-direction:column;gap:12px}
+  .dn-row{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .dn-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .dn-name{font-size:16px;font-weight:800;flex:1;display:flex;align-items:center;gap:8px}
+  .dn-status{font-size:13px;font-weight:700}
+  .dn-status.ok{color:var(--ok)} .dn-status.warn{color:var(--low)} .dn-status.bad{color:var(--high)}
+  .dn-recheck{flex:none;padding:7px 14px !important;font-size:13px !important}
+  .dn-body{display:flex;flex-direction:column;gap:7px}
+  .dn-line{display:grid;grid-template-columns:74px 60px 1fr auto;align-items:baseline;gap:8px;font-size:14px}
+  .dn-line-label{color:var(--ink-faint);font-size:13px}
+  .dn-line-val{font-weight:800;font-variant-numeric:tabular-nums}
+  .dn-line-val.v-ok,.dn-line-val.nf-ok{color:var(--ok)}
+  .dn-line-val.v-low,.dn-line-val.v-high,.dn-line-val.nf-warn{color:var(--low)}
+  .dn-line-val.v-none,.dn-line-val.nf-bad{color:var(--high)}
+  .dn-line-judge{font-size:13px}
+  .dn-line-judge.v-ok,.dn-line-judge.nf-ok{color:var(--ok)}
+  .dn-line-judge.v-low,.dn-line-judge.v-high,.dn-line-judge.nf-warn{color:var(--low)}
+  .dn-line-judge.v-none,.dn-line-judge.nf-bad{color:var(--high)}
+  .dn-line-peak{color:var(--ink-faint);font-size:12px;text-align:right}
+  .done-actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+  .done-actions button{flex:1;min-width:140px}
+  .host-summary{text-align:left;max-width:440px;margin:20px auto 0;background:var(--panel-2);border:1px solid var(--accent-soft);border-radius:12px;padding:16px 18px}
+  .hs-title{font-size:15px;font-weight:800;color:var(--accent);margin-bottom:6px}
+  .hs-title.hs-ok{color:var(--ok)}
+  .hs-note{font-size:13px;color:var(--ink-dim);line-height:1.6;margin-bottom:12px}
+  .hs-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 12px;border-radius:8px;margin-top:6px;font-size:14px}
+  .hs-row.warn{background:rgba(240,180,65,.1)}
+  .hs-row.bad{background:rgba(239,106,106,.1)}
+  .hs-name{font-weight:800}
+  .hs-action{text-align:right;font-weight:600;color:var(--ink)}
 
   .hidden{display:none}
   footer{margin-top:34px;text-align:center;font-size:14px;color:var(--ink-faint);line-height:1.9}
@@ -206,11 +237,14 @@
 <div class="wrap">
 
   <div class="brand"><h1>こえそろえ</h1><span class="romaji">koe-soroe</span></div>
-  <p class="lede">コラボ配信の前に、参加者全員の声の大きさをそろえる音量チェックツール。</p>
+  <p class="lede">コラボ前の音量チェックを、全員で・一斉に・数値を見ながら。</p>
 
   <div class="premise">
-    <b>これは何のツール？</b> コラボ配信で、配信者の配信に<b>全員の声がきれいに乗るよう、みんなの音量をそろえる</b>ためのものです。
-    マイクが小さいまま配信が終わってしまう、誰かだけ音が割れる、を始める前に防ぎます。
+    <b>これは何のツール？</b><br>
+    これまでコラボ前の音量合わせは、配信者がひとりでOBSのメーターをなんとなく目視して、「もう少し大きく」と耳で判断する……というやり方が多かったと思います。
+    このツールは、それを<b>参加者みんなで一斉に、同じガイドと数値を見ながら</b>できるようにするものです。
+    だれの声が小さい・大きい・割れそうかが数値ではっきり分かり、配信に全員の声をきれいに乗せられます。
+    「マイクが小さいまま、誰も気づかず配信が終わった」をなくします。
   </div>
 
   <div class="premise" style="border-color:rgba(240,180,65,.4);background:rgba(240,180,65,.07);color:#f3e3c4">
@@ -252,7 +286,7 @@
       <p><b>メーターが動かない：</b>共有のときに「システム音声／音声も共有」のチェックを入れ忘れていないか確認。入れ直すにはもう一度「取り込む」を押します。「画面全体」を選ぶのが確実です。</p>
       <p><b>音声共有の選択肢が出ない：</b>ブラウザはChrome系（Chrome / Edge）推奨。Firefoxやスマホ版は音声共有に未対応のことがあります。</p>
       <p><b>自分の声が0のまま：</b>正常です。自分の声は自分のDiscordから返らないため測れません。基本は他の人に見てもらってください。</p>
-      <p><b>ひとりで自分の声を確認したいとき：</b>Discordの設定 →「音声・ビデオ」→ マイクテストの「確認してみよう」をON。自分の声が返ってくる状態でこのツールに取り込めば、自分の声も測れます。※テスト中はVCの通話が一時的に止まるので、コラボ前のひとり確認向けです。声が返ってくるので読み上げ文章に集中するとやりやすいです。最終確認は他の人にも見てもらうのが確実です。</p>
+      <p><b>ひとりで自分の声を確認したいとき：</b>Discordの設定 →「音声・ビデオ」→「マイクテスト」ボタンを押します。自分の声が返ってくる状態でこのツールに取り込めば、自分の声も測れます。※テスト中はVCの通話が一時的に止まるので、コラボ前のひとり確認向けです。声が返ってくるので読み上げ文章に集中するとやりやすいです。最終確認は他の人にも見てもらうのが確実です。</p>
     </details>
   </section>
 
@@ -312,9 +346,13 @@
     <div class="done-screen">
       <div class="big">🎚️</div>
       <h2>全員チェック完了</h2>
-      <p style="color:var(--ink-dim);font-size:14px;margin:0">みんなの声がそろいました。よいコラボを！</p>
+      <p style="color:var(--ink-dim);font-size:14px;margin:0">結果をまとめました。よいコラボを！</p>
+      <div class="host-summary" id="hostSummary"></div>
       <div class="done-list" id="doneList"></div>
-      <button class="btn-ghost" id="resetBtn" style="margin-top:22px;width:100%">もう一度チェックする</button>
+      <div class="done-actions">
+        <button class="btn-ghost" id="addMemberDone">＋ メンバーを追加</button>
+        <button class="btn-ghost" id="resetBtn">もう一度チェックする（全員）</button>
+      </div>
     </div>
   </section>
 
@@ -435,18 +473,19 @@
   }
   // ターン別判定(声の大きさ)
   function judge(turnNo,db){
-    if(db===null) return {key:"none",label:"声が検出できません",advice:"マイクがミュートになっていないか、共有設定を確認してください。",cls:"v-none"};
+    if(db===null) return {key:"none",label:"声が検出できません",advice:"あなたの声が検出できません。マイクがミュートになっていないか、共有設定を確認してください。",cls:"v-none"};
     // 両ターン共通の基準: −12以下=小さすぎ / −12〜−6=ちょうどよい / −6超=割れるかも
     if(db<TH.normalLow){
-      const a = turnNo===1
-        ? "普段の声で −12dB に届いていません。マイクの音量を上げてください。上げられない場合は、各自このあと自分のDiscordで相手の音量を上げてもOK。"
-        : "大きめの声でも −12dB に届いていません。マイクの音量を上げてください。";
-      return {key:"low",label:"小さすぎかも",advice:a,cls:"v-low"};
+      return {key:"low",label:"小さすぎかも",
+        advice:"あなたの声が小さめです（−12dBに届いていません）。マイクの音量を上げるか、マイクに少し近づいてみてください。これ以上マイクの音量が上がらない場合は、他の人にDiscord側で音量を上げてもらってください。",
+        cls:"v-low"};
     }
     if(db>TH.loudHigh){
-      return {key:"high",label:"大きすぎ（割れるかも）",advice:"−6dB を超えています。マイクの音量を少し下げてください。音割れの原因になります。",cls:"v-high"};
+      return {key:"high",label:"大きすぎ（割れるかも）",
+        advice:"あなたの声が大きめです（−6dBを超えています）。マイクの音量を少し下げてください。音割れの原因になります。",
+        cls:"v-high"};
     }
-    return {key:"ok",label:"ちょうどよい",advice:"−12〜−6dB の範囲に収まっています。",cls:"v-ok"};
+    return {key:"ok",label:"ちょうどよい",advice:"あなたの声はちょうどよい大きさです（−12〜−6dBに収まっています）。",cls:"v-ok"};
   }
   // ノイズフロア判定
   function judgeNoise(db){
@@ -509,6 +548,13 @@
           `<span class="m-chip">普段 <b class="${n.cls}">${fmtDb(m.normalDb)}</b> <span class="m-peak">ピーク ${fmtDb(m.normalPeak)}</span></span>`+
           `<span class="m-chip">大きめ <b class="${l.cls}">${fmtDb(m.loudDb)}</b> <span class="m-peak">ピーク ${fmtDb(m.loudPeak)}</span></span>`;
         left.appendChild(res);
+        // 配信者向け: 調整が必要なときだけ案内を出す
+        const g=hostGuide(m.normalDb);
+        if(g.need){
+          const adj=document.createElement("div"); adj.className="m-adjust "+g.cls;
+          adj.innerHTML=`<span class="m-adjust-label">配信者へ</span> ${g.text}`;
+          left.appendChild(adj);
+        }
       }
       row.appendChild(left);
 
@@ -540,6 +586,19 @@
       return {label:"要調整（"+issues.join("・")+"）",cls:"warn",mark:"⚠"};
     }
     return {label:"OK",cls:"ok",mark:"✓"};
+  }
+
+  // 配信者向け: その人のDiscord個別音量をどう動かすかの案内。
+  // 普段の声(normalDb)を基準に、適正帯の中央(-9dB)へ寄せる方向と度合いを返す。
+  const TARGET=(TH.normalLow+TH.loudHigh)/2; // -9dB
+  function hostGuide(normalDb){
+    if(normalDb===null||normalDb===undefined) return {need:true,cls:"bad",text:"音声が取れていません。この人のマイク・共有設定を確認してください"};
+    const diff=normalDb-TARGET;
+    const adb=Math.abs(Math.round(diff));
+    if(Math.abs(diff)<=3) return {need:false,cls:"ok",text:"適正。調整不要"};
+    const dir=diff<0?"上げる":"下げる";
+    const amount=adb<=6?"少し":adb<=12?"しっかり":"大きく";
+    return {need:true,cls:"warn",text:`Discordの個別音量を${amount}${dir}（目安 約${adb}dB）`};
   }
 
   function removeMember(i){
@@ -724,26 +783,78 @@
 
   function showDone(){
     $("check").classList.add("hidden"); $("done").classList.remove("hidden");
+
+    // 配信者向けサマリー: 調整が必要な人だけ抽出
+    const hs=$("hostSummary"); hs.innerHTML="";
+    const needAdjust=members.filter(m=>hostGuide(m.normalDb).need);
+    if(needAdjust.length===0){
+      hs.innerHTML=`<div class="hs-title hs-ok">✓ 全員が適正範囲です</div><div class="hs-note">配信者の個別音量調整は不要です。</div>`;
+    }else{
+      const rows=needAdjust.map(m=>{
+        const g=hostGuide(m.normalDb);
+        return `<div class="hs-row ${g.cls}"><span class="hs-name">${escapeHtml(m.name)}</span><span class="hs-action">${g.text}</span></div>`;
+      }).join("");
+      hs.innerHTML=`<div class="hs-title">配信者へ：個別音量の調整がおすすめの人</div><div class="hs-note">配信に全員の声をきれいに乗せるため、Discordで各メンバーを右クリック→音量で調整してください。</div>${rows}`;
+    }
+
     const list=$("doneList"); list.innerHTML="";
-    members.forEach(m=>{
+    members.forEach((m,idx)=>{
       const n=judge(1,m.normalDb), l=judge(2,m.loudDb), nz=judgeNoise(m.noiseDb), st=memberStatus(m.normalDb,m.loudDb);
-      const fmt=(db,r)=>`<span class="${r.cls}">${db===null?"—":Math.round(db)+"dB"}・${r.label}</span>`;
-      const d=document.createElement("div");
-      d.innerHTML=`<span class="nm"><span class="m-mark ${st.cls}">${st.mark}</span> ${escapeHtml(m.name)}</span><span style="text-align:right">普段 ${fmt(m.normalDb,n)} <span style="color:var(--ink-faint);font-size:12px">(ピーク${fmtDb(m.normalPeak)})</span> ／ 大 ${fmt(m.loudDb,l)} <span style="color:var(--ink-faint);font-size:12px">(ピーク${fmtDb(m.loudPeak)})</span><br><span style="font-size:12.5px;color:var(--ink-faint)">ノイズ: <span class="${nz.cls}">${m.noiseDb===null?"—":Math.round(m.noiseDb)+"dB"}</span></span></span>`;
-      list.appendChild(d);
+      const row=document.createElement("div"); row.className="dn-row";
+
+      // 上段: 名前+総合ステータス+再チェックボタン
+      const head=document.createElement("div"); head.className="dn-head";
+      head.innerHTML=`<span class="dn-name"><span class="m-mark ${st.cls}">${st.mark}</span> ${escapeHtml(m.name)}</span><span class="dn-status ${st.cls}">${st.label}</span>`;
+      const recheck=document.createElement("button"); recheck.className="btn-ghost dn-recheck"; recheck.textContent="この人をやり直す";
+      recheck.onclick=()=>recheckOne(idx);
+      head.appendChild(recheck);
+      row.appendChild(head);
+
+      // 下段: 普段/大きめの2行 + ノイズ
+      const body=document.createElement("div"); body.className="dn-body";
+      const line=(label,db,r,peak)=>
+        `<div class="dn-line"><span class="dn-line-label">${label}</span>`+
+        `<span class="dn-line-val ${r.cls}">${fmtDb(db)}</span>`+
+        `<span class="dn-line-judge ${r.cls}">${r.label}</span>`+
+        `<span class="dn-line-peak">ピーク ${fmtDb(peak)}</span></div>`;
+      body.innerHTML=
+        line("普段の声", m.normalDb, n, m.normalPeak)+
+        line("大きめ",  m.loudDb,   l, m.loudPeak)+
+        `<div class="dn-line"><span class="dn-line-label">ノイズ</span><span class="dn-line-val ${nz.cls}">${m.noiseDb===null?"—":Math.round(m.noiseDb)+"dB"}</span><span class="dn-line-judge ${nz.cls}">${nz.label}</span></div>`;
+      row.appendChild(body);
+      list.appendChild(row);
     });
   }
 
-  $("addMemberCheck").onclick=()=>{
+  // 完了画面から1人だけ再チェック: チェック画面に戻すだけ(開始ボタンは本人が押す)
+  function recheckOne(i){
+    $("done").classList.add("hidden");
+    $("check").classList.remove("hidden");
+    activeIdx=-1;
+    renderRoster();
+    // その人のカードまでスクロールして、開始ボタンを押してもらう
+    const card=rosterBox.children[i];
+    if(card) card.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+
+  function addMemberPrompt(fromDone){
     const name=prompt("追加するメンバーの名前を入力してください");
-    if(name && name.trim()){
-      members.push({name:name.trim(),normalDb:null,loudDb:null,normalPeak:null,loudPeak:null,noiseDb:null,status:"pending"});
-      renderRoster();
-    }
-  };
+    if(!(name && name.trim())) return;
+    members.push({name:name.trim(),normalDb:null,loudDb:null,normalPeak:null,loudPeak:null,noiseDb:null,status:"pending"});
+    const newIdx=members.length-1;
+    // 完了画面から追加した場合はチェック画面に戻す(新メンバーは未測定なので)
+    $("done").classList.add("hidden");
+    $("check").classList.remove("hidden");
+    activeIdx=-1;
+    renderRoster();
+    const card=rosterBox.children[newIdx];
+    if(card) card.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+  $("addMemberCheck").onclick=()=>addMemberPrompt(false);
+  $("addMemberDone").onclick=()=>addMemberPrompt(true);
 
   $("resetBtn").onclick=()=>{
-    members.forEach(m=>{m.status="pending";m.normalDb=null;m.loudDb=null;m.noiseDb=null;});
+    members.forEach(m=>{m.status="pending";m.normalDb=null;m.loudDb=null;m.normalPeak=null;m.loudPeak=null;m.noiseDb=null;});
     $("done").classList.add("hidden"); $("check").classList.remove("hidden"); activeIdx=-1; renderRoster();
   };
 
