@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>こえそろえ — コラボ前の音量チェック</title>
+<style>
+  :root{
+    --bg:#0e1014;
+    --panel:#171a21;
+    --panel-2:#1f232c;
+    --line:#2a2f3a;
+    --ink:#e8ebf0;
+    --ink-dim:#9aa3b2;
+    --ink-faint:#5d6675;
+    --ok:#54d6a0;
+    --low:#f0b441;
+    --high:#ef6a6a;
+    --accent:#7aa2ff;
+    --accent-soft:#34406b;
+    --shadow:0 12px 40px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1a1f2b 0%, transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+    min-height:100vh;line-height:1.65;-webkit-font-smoothing:antialiased;
+    font-size:16px;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:32px 22px 80px}
+
+  .brand{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+  .brand h1{font-size:32px;letter-spacing:.06em;margin:0;font-weight:800}
+  .brand .romaji{font-size:12px;color:var(--ink-faint);letter-spacing:.3em;text-transform:uppercase}
+  .lede{color:var(--ink-dim);font-size:16px;margin:0 0 24px}
+
+  .card{
+    background:linear-gradient(180deg,var(--panel) 0%, #13161c 100%);
+    border:1px solid var(--line);border-radius:16px;padding:20px;
+    box-shadow:var(--shadow);margin-bottom:16px;
+  }
+  .card h2{font-size:15px;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase;margin:0 0 16px;font-weight:700}
+
+  .premise{
+    border:1px solid var(--accent-soft);background:rgba(122,162,255,.08);
+    border-radius:14px;padding:16px 18px;margin-bottom:18px;font-size:15px;color:#cdd8ef;line-height:1.7;
+  }
+  .premise b{color:#eef3ff}
+
+  .flow-note{
+    background:rgba(122,162,255,.05);border:1px solid var(--accent-soft);border-radius:14px;
+    padding:18px 20px;margin-bottom:24px;
+  }
+  .flow-title{font-size:14px;letter-spacing:.08em;color:var(--accent);font-weight:800;margin-bottom:14px}
+  .flow-steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:15px;color:var(--ink);line-height:1.6}
+  .flow-steps li{padding-left:4px}
+  .flow-steps li::marker{color:var(--accent);font-weight:800}
+  .flow-steps b{color:#fff;font-weight:800}
+  .flow-tail{font-size:14px;color:var(--ink-dim);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:10px;transition:.15s}
+  button:disabled{cursor:not-allowed;opacity:.4}
+  .btn-primary{
+    background:linear-gradient(180deg,#7aa2ff,#5b82e0);color:#0a0d14;font-weight:800;
+    padding:16px 22px;font-size:17px;letter-spacing:.04em;width:100%;
+    box-shadow:0 6px 18px rgba(91,130,224,.35);
+  }
+  .btn-primary:hover:not(:disabled){filter:brightness(1.08)}
+  .btn-ghost{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);padding:11px 18px;font-size:15px;font-weight:700}
+  .btn-ghost:hover:not(:disabled){border-color:var(--accent-soft)}
+
+  .names{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .name-row{display:flex;gap:8px;align-items:center}
+  .name-row input{flex:1;background:#0c0e13;border:1px solid var(--line);color:var(--ink);padding:14px 15px;border-radius:10px;font-size:17px;font-family:inherit}
+  .name-row input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(122,162,255,.15)}
+  .name-row .rm{background:none;color:var(--ink-faint);font-size:22px;padding:4px 12px}
+  .name-row .rm:hover{color:var(--high)}
+  .add-name{color:var(--accent);background:none;font-size:15px;font-weight:700;padding:8px 2px;text-align:left}
+  .hint{font-size:14px;color:var(--ink-dim);margin-top:6px;line-height:1.65}
+  .hint b{color:var(--ink)}
+
+  .cap-status{display:flex;align-items:center;gap:10px;font-size:15px;margin-top:14px;color:var(--ink-dim)}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--ink-faint);flex:none}
+  .dot.live{background:var(--ok);box-shadow:0 0 10px var(--ok);animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.45}}
+
+  .roster{display:flex;flex-direction:column;gap:12px}
+  .member{display:flex;align-items:center;gap:14px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px 16px}
+  .member.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 8px 24px rgba(122,162,255,.18)}
+  .member.done{opacity:.85}
+  .m-left{flex:1;min-width:0}
+  .m-name{font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px}
+  .m-result{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .m-chip{font-size:13.5px;color:var(--ink-dim);background:#0c0e13;border:1px solid var(--line);border-radius:8px;padding:4px 10px}
+  .m-chip b{font-weight:800}
+  .m-peak{color:var(--ink-faint);font-size:12px;margin-left:4px}
+  .m-actions{display:flex;align-items:center;gap:8px;flex:none}
+  .m-remove{background:none;color:var(--ink-faint);font-size:22px;line-height:1;padding:4px 10px;border-radius:8px}
+  .m-remove:hover{color:var(--high);background:rgba(239,106,106,.1)}
+  .m-mark{font-size:13px;font-weight:800;letter-spacing:.04em}
+  .m-mark.ok{color:var(--ok)}
+  .m-mark.warn{color:var(--low)}
+  .m-mark.bad{color:var(--high)}
+  .member .btn-ghost{flex:none}
+
+  .measure{margin-top:10px;padding-top:18px;border-top:1px solid var(--line)}
+  /* turn indicator */
+  .turns{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
+  .turn-pip{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--ink-faint);padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:#0c0e13}
+  .turn-pip.cur{color:#eef3ff;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .turn-pip.cleared{color:var(--ok);border-color:rgba(84,214,160,.4)}
+  .turn-pip .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;background:var(--panel-2)}
+  .turn-pip.cur .n{background:var(--accent);color:#0a0d14}
+  .turn-pip.cleared .n{background:var(--ok);color:#06140e}
+
+  .instruct{text-align:center;font-size:22px;font-weight:800;color:#eef3ff;margin:4px 0 6px}
+  .instruct .who{color:var(--accent)}
+  .voice-mode{text-align:center;font-size:17px;font-weight:800;margin:0 0 16px;padding:6px 0}
+  .voice-mode.normal{color:var(--accent)}
+  .voice-mode.loud{color:var(--low)}
+
+  /* script to read aloud — 目立たせる */
+  .script-box{
+    background:linear-gradient(180deg,#11151d,#0c0e13);border:1px solid var(--accent-soft);border-left:4px solid var(--accent);
+    border-radius:12px;padding:18px 20px;margin-bottom:16px;
+  }
+  .script-box.loud{border-left-color:var(--low);border-color:rgba(240,180,65,.35)}
+  .script-label{font-size:12px;letter-spacing:.1em;color:var(--accent);margin-bottom:8px;font-weight:800}
+  .script-box.loud .script-label{color:var(--low)}
+  .script-text{font-size:21px;line-height:1.75;color:#fff;font-weight:700}
+
+  .mute-note{font-size:14px;color:var(--low);text-align:center;margin:0 0 16px;font-weight:700}
+
+  /* phase banner (countdown / silence / speak) — 大きく目立たせる */
+  .phase-banner{text-align:center;margin:6px 0 18px;min-height:100px;display:flex;flex-direction:column;justify-content:center;
+    background:rgba(122,162,255,.04);border-radius:14px;padding:14px}
+  .phase-big{font-size:68px;font-weight:800;line-height:1;letter-spacing:.02em;color:#eef3ff;font-variant-numeric:tabular-nums}
+  .phase-big.go{color:var(--ok);font-size:52px}
+  .phase-big.silence{color:var(--accent);font-size:46px}
+  .phase-big.speak{color:var(--low);font-size:46px}
+  .phase-sub{font-size:17px;color:var(--ink);margin-top:10px;font-weight:700}
+  .phase-pop{animation:pop .4s ease}
+  @keyframes pop{0%{transform:scale(.7);opacity:.3}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+  .noise-line{font-size:14.5px;margin-top:10px;min-height:1.2em;font-weight:600}
+  .noise-line .nf-ok{color:var(--ok)}
+  .noise-line .nf-warn{color:var(--low)}
+  .noise-line .nf-bad{color:var(--high)}
+
+  .meter-shell{position:relative;height:54px;border-radius:12px;overflow:hidden;background:#090b0f;border:1px solid var(--line)}
+  .meter-zones{position:absolute;inset:0;display:flex}
+  .zone{height:100%}
+  .meter-fill{position:absolute;top:0;left:0;height:100%;width:0%;transition:width .05s linear}
+  .meter-target{position:absolute;top:0;bottom:0;width:2px;background:#fff;opacity:.55}
+  .meter-target .cap{position:absolute;top:-19px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--ink-dim);white-space:nowrap}
+  .meter-scale{position:relative;height:16px;margin-top:6px}
+  .meter-scale span{position:absolute;transform:translateX(-50%);font-size:12px;color:var(--ink-dim);letter-spacing:.04em;white-space:nowrap;font-weight:600}
+  .meter-scale span.edge-l{transform:translateX(0)}
+  .meter-scale span.edge-r{transform:translateX(-100%)}
+
+  .readout{text-align:center;margin:20px 0 4px}
+  .readout .db{font-size:46px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+  .readout .db.measuring{font-size:22px;color:var(--ink-faint);font-weight:700}
+  .readout .verdict{font-size:20px;font-weight:800;margin-top:4px}
+  .readout .advice{font-size:15px;color:var(--ink-dim);margin-top:8px;min-height:1.2em;line-height:1.6}
+  .v-ok{color:var(--ok)} .v-low{color:var(--low)} .v-high{color:var(--high)} .v-none{color:var(--ink-faint)}
+
+  .measure-actions{display:flex;gap:10px;margin-top:20px}
+  .measure-actions button{flex:1}
+  .btn-ok{background:linear-gradient(180deg,#54d6a0,#3bb487);color:#06140e;font-weight:800;padding:15px;font-size:16px}
+  .btn-ok:hover:not(:disabled){filter:brightness(1.08)}
+  .countdown{font-size:13px;color:var(--ink-faint);text-align:center;margin-top:10px}
+
+  .done-screen{text-align:center;padding:18px 8px}
+  .done-screen .big{font-size:52px;margin-bottom:8px}
+  .done-screen h2{color:var(--ok);letter-spacing:.08em;border:0;font-size:22px;margin:0 0 10px}
+  .done-list{text-align:left;max-width:440px;margin:22px auto 0;display:flex;flex-direction:column;gap:8px}
+  .done-list div{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:12px 14px;background:var(--panel-2);border-radius:10px}
+  .done-list .nm{font-weight:800}
+
+  .hidden{display:none}
+  footer{margin-top:34px;text-align:center;font-size:14px;color:var(--ink-faint);line-height:1.9}
+  footer a{color:var(--accent);text-decoration:none;font-weight:700}
+  footer a:hover{text-decoration:underline}
+  details.faq{margin-top:18px;font-size:14.5px;color:var(--ink-dim);line-height:1.7}
+  details.faq summary{cursor:pointer;color:var(--accent);letter-spacing:.03em;padding:8px 0;font-weight:700}
+  details.faq p{margin:8px 0}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media (max-width:560px){
+    .wrap{padding:24px 16px 70px}
+    .brand h1{font-size:28px}
+    .phase-big{font-size:56px}
+    .readout .db{font-size:40px}
+    .measure-actions{flex-wrap:wrap}
+    .measure-actions button{flex:1 1 100%}
+    .measure-actions #backBtn{flex:1 1 100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand"><h1>こえそろえ</h1><span class="romaji">koe-soroe</span></div>
+  <p class="lede">コラボ配信の前に、参加者全員の声の大きさをそろえる音量チェックツール。</p>
+
+  <div class="premise">
+    <b>これは何のツール？</b> コラボ配信で、配信者の配信に<b>全員の声がきれいに乗るよう、みんなの音量をそろえる</b>ためのものです。
+    マイクが小さいまま配信が終わってしまう、誰かだけ音が割れる、を始める前に防ぎます。
+  </div>
+
+  <div class="premise" style="border-color:rgba(240,180,65,.4);background:rgba(240,180,65,.07);color:#f3e3c4">
+    <b style="color:var(--low)">⚠ 全員でこのページを開き、開始ボタンは「せーの」で一斉に押してください。</b><br>
+    このツールは、ボタンを押した人が<b>その瞬間に聞いている声</b>を測ります。各自バラバラに押すと測るタイミングがズレるので、
+    チェックする人の番になったら<b>全員が同時に同じ人の「開始」を押す</b>のがコツです。自分の声は自分では測れないので、他の人に見てもらいましょう。
+  </div>
+
+  <div class="flow-note">
+    <div class="flow-title">チェックの流れ（ひとりにつき2回ずつ）</div>
+    <ol class="flow-steps">
+      <li>チェックする人を決め、<b>全員で「せーの」でその人の「開始」を一斉に押す</b></li>
+      <li><b>3・2・1</b> のカウントダウンで準備</li>
+      <li>カウント後、<b>3秒だけ黙る</b> → ノイズ（雑音）をチェック</li>
+      <li>合図が出たら<b>その人だけ文章を読み上げる</b> → 声の大きさをチェック</li>
+    </ol>
+    <div class="flow-tail">これを「① いつもの声」「② 少し大きめの声」の2回おこないます。全員ぶん終わればそろえ完了です。</div>
+  </div>
+
+  <!-- SETUP -->
+  <section id="setup" class="card">
+    <h2>① 参加メンバー</h2>
+    <div class="names" id="names"></div>
+    <button class="add-name" id="addName">＋ メンバーを追加</button>
+    <div class="hint">コラボに参加する人の名前を入れてください（自分を含めてOK）。</div>
+
+    <h2 style="margin-top:22px">② Discordの音声を取り込む</h2>
+    <div class="hint" style="margin-bottom:12px">
+      下のボタンを押すと共有画面が出ます。<b>「画面全体」を選び、「システム音声（音声も共有）」をオンにして</b>共有してください。
+      ※「ウィンドウ」でアプリ単体を選ぶと音声が取り込めないことがあります。確実なのは「画面全体」です。
+    </div>
+    <button class="btn-ghost" id="capBtn">🔊 Discordの音声を取り込む</button>
+    <div class="cap-status"><span class="dot" id="capDot"></span><span id="capText">まだ取り込んでいません</span></div>
+
+    <button class="btn-primary" id="startBtn" style="margin-top:22px" disabled>チェックを始める</button>
+
+    <details class="faq">
+      <summary>うまくいかないとき・ひとりで確認したいとき</summary>
+      <p><b>メーターが動かない：</b>共有のときに「システム音声／音声も共有」のチェックを入れ忘れていないか確認。入れ直すにはもう一度「取り込む」を押します。「画面全体」を選ぶのが確実です。</p>
+      <p><b>音声共有の選択肢が出ない：</b>ブラウザはChrome系（Chrome / Edge）推奨。Firefoxやスマホ版は音声共有に未対応のことがあります。</p>
+      <p><b>自分の声が0のまま：</b>正常です。自分の声は自分のDiscordから返らないため測れません。基本は他の人に見てもらってください。</p>
+      <p><b>ひとりで自分の声を確認したいとき：</b>Discordの設定 →「音声・ビデオ」→ マイクテストの「確認してみよう」をON。自分の声が返ってくる状態でこのツールに取り込めば、自分の声も測れます。※テスト中はVCの通話が一時的に止まるので、コラボ前のひとり確認向けです。声が返ってくるので読み上げ文章に集中するとやりやすいです。最終確認は他の人にも見てもらうのが確実です。</p>
+    </details>
+  </section>
+
+  <!-- CHECK -->
+  <section id="check" class="card hidden">
+    <h2>チェック中</h2>
+    <div class="roster" id="roster"></div>
+    <button class="add-name" id="addMemberCheck" style="margin-top:12px">＋ メンバーを追加</button>
+
+    <div class="measure hidden" id="measure">
+      <div class="turns">
+        <div class="turn-pip" id="pip1"><span class="n">1</span>普段の声</div>
+        <div class="turn-pip" id="pip2"><span class="n">2</span>大きめの声</div>
+      </div>
+
+      <div class="instruct"><span class="who" id="mWho"></span> さんの番です</div>
+      <div class="voice-mode" id="vMode"></div>
+
+      <!-- フェーズ大表示(カウントダウン/静寂/発話の合図) -->
+      <div class="phase-banner" id="phaseBanner">
+        <div class="phase-big" id="phaseBig">3</div>
+        <div class="phase-sub" id="phaseSub">準備してください</div>
+      </div>
+
+      <div class="script-box" id="scriptBox">
+        <div class="script-label">読み上げてください</div>
+        <div class="script-text" id="scriptText"></div>
+      </div>
+
+      <div class="mute-note">他の人はミュート、または喋らないでください</div>
+
+      <div class="meter-shell">
+        <div class="meter-zones" id="zones"></div>
+        <div class="meter-fill" id="meterFill"></div>
+        <div class="meter-target" id="meterTarget"><span class="cap" id="targetCap"></span></div>
+      </div>
+      <div class="meter-scale" id="meterScale"></div>
+
+      <div class="readout">
+        <div class="db" id="rDb">—</div>
+        <div class="verdict" id="rVerdict">準備中…</div>
+        <div class="advice" id="rAdvice"></div>
+        <div class="noise-line" id="noiseLine"></div>
+      </div>
+
+      <div class="measure-actions">
+        <button class="btn-ghost" id="backBtn">◀ 戻る</button>
+        <button class="btn-ghost" id="reMeasure">測り直す</button>
+        <button class="btn-ok" id="nextBtn" disabled>次へ</button>
+      </div>
+      <div class="countdown" id="cd"></div>
+    </div>
+  </section>
+
+  <!-- DONE -->
+  <section id="done" class="card hidden">
+    <div class="done-screen">
+      <div class="big">🎚️</div>
+      <h2>全員チェック完了</h2>
+      <p style="color:var(--ink-dim);font-size:14px;margin:0">みんなの声がそろいました。よいコラボを！</p>
+      <div class="done-list" id="doneList"></div>
+      <button class="btn-ghost" id="resetBtn" style="margin-top:22px;width:100%">もう一度チェックする</button>
+    </div>
+  </section>
+
+  <footer>
+    こえそろえ ・ ブラウザだけで動きます（送信なし）<br>
+    <span style="display:inline-block;margin-top:8px">役に立ちましたか？ <a id="kofi" href="https://ko-fi.com/kumano_nee" target="_blank" rel="noopener">☕ 制作者にコーヒーをおごる</a></span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ===== 評価しきい値（dBFS）=====
+  // 普段の声: -12 以上あってほしい / 大きめの声: -6 を超えないでほしい
+  const TH = { silence:-45, normalLow:-12, loudHigh:-6 };
+  // ノイズフロア判定: 静寂中のレベルがこれより上だと警告
+  const NOISE = { clean:-50, warn:-42 }; // clean以下=きれい, warn以下=わずか, 超=ノイズ大
+  const METER_MIN=-60, METER_MAX=0;
+  // 各フェーズの長さ(ms)
+  const PH = { count:3000, silence:3000, speak:6000 };
+  const DECAY_PER_SEC = 16; // ピークホールドの減衰(dB/秒)
+
+  // ===== 読み上げ文章 =====
+  // 普段の声ターン: 落ち着いた普通のトーン
+  const SCRIPTS_NORMAL=[
+    "今日はこのコラボに来てくれてありがとう。よろしくお願いします。",
+    "音声のテストをしています。いつもの話すくらいの声で読んでいます。",
+    "今の声が、ちょうどいい大きさで届いているか確認しています。",
+    "あいうえお、かきくけこ。普通のトーンで読み上げています。",
+    "コラボが始まる前に、声の大きさをそろえているところです。",
+  ];
+  // 大きめの声ターン: テンション高め
+  const SCRIPTS_LOUD=[
+    "それじゃあ、いっきまーす！今日もよろしくお願いします！",
+    "うわー！すごい！やったー！と、大きめの声を出しています！",
+    "ここがいちばん盛り上がるところ！声を張って読んでいます！",
+    "せーの、いえーい！テンション高めの声量チェックです！",
+    "おおっと！ここで大きな声！音割れしないかチェック中です！",
+  ];
+
+  // ===== 状態 =====
+  let members=[]; // {name, normalDb, loudDb, noiseDb, status}
+  let activeIdx=-1, turn=1; // turn: 1=普段, 2=大きめ
+  let stream=null, audioCtx=null, analyser=null, sourceNode=null, dataArr=null;
+  let rafId=null, phaseTimer=null;
+  let phase="idle"; // idle/count/silence/speak/result
+  let phaseStart=0;
+  let barLevel=-100;        // ピークホールド: バーの唯一の真実
+  let turnPeak=-100;        // そのターンの瞬間最大dB(ピーク)
+  let speakTrail=[];        // 発話フェーズ中のバー位置の記録
+  let noiseSamples=[];      // 静寂フェーズの音量サンプル
+  let measuredNoiseDb=null;
+
+  const $=id=>document.getElementById(id);
+  const namesBox=$("names"), rosterBox=$("roster");
+
+  // ===== 名前欄 =====
+  function nameRow(val=""){
+    const row=document.createElement("div"); row.className="name-row";
+    const inp=document.createElement("input");
+    inp.type="text"; inp.placeholder="名前"; inp.value=val; inp.maxLength=24;
+    inp.addEventListener("input", refreshStartBtn);
+    const rm=document.createElement("button"); rm.className="rm"; rm.textContent="×"; rm.title="削除";
+    rm.onclick=()=>{ row.remove(); refreshStartBtn(); };
+    row.append(inp,rm); return row;
+  }
+  const currentNames=()=>[...namesBox.querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean);
+  function refreshStartBtn(){ $("startBtn").disabled = !(currentNames().length>=1 && !!stream); }
+  $("addName").onclick=()=>namesBox.appendChild(nameRow());
+  namesBox.appendChild(nameRow()); namesBox.appendChild(nameRow());
+
+  // ===== 音声取り込み =====
+  $("capBtn").onclick=async()=>{
+    try{
+      const s=await navigator.mediaDevices.getDisplayMedia({
+        video:true,
+        audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}
+      });
+      if(s.getAudioTracks().length===0){
+        s.getTracks().forEach(t=>t.stop());
+        setCap(false,"音声が共有されていません。「システム音声を共有」にチェックを入れ、「画面全体」でもう一度お試しください。");
+        return;
+      }
+      if(stream) stream.getTracks().forEach(t=>t.stop());
+      stream=s;
+      s.getAudioTracks()[0].addEventListener("ended",()=>{ teardownAudio(); setCap(false,"音声の取り込みが止まりました。もう一度取り込んでください。"); refreshStartBtn(); });
+      setupAudio(); setCap(true,"取り込み中。Discordの音声が聞こえています。"); refreshStartBtn();
+    }catch(e){ setCap(false,"取り込みをキャンセルしました。"); }
+  };
+  function setCap(live,text){ $("capDot").classList.toggle("live",live); $("capText").textContent=text; }
+  function setupAudio(){
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    sourceNode=audioCtx.createMediaStreamSource(stream);
+    analyser=audioCtx.createAnalyser(); analyser.fftSize=1024;
+    dataArr=new Float32Array(analyser.fftSize);
+    sourceNode.connect(analyser); // destinationには繋がない(ハウリング防止)
+  }
+  function teardownAudio(){
+    if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+    if(audioCtx){ audioCtx.close(); audioCtx=null; }
+    analyser=null; sourceNode=null;
+  }
+
+  // ===== dB計算 =====
+  function currentDbfs(){
+    analyser.getFloatTimeDomainData(dataArr);
+    // ピーク(瞬間最大振幅)で測る。一般的なマイク音量メーターと同じスケールになり、
+    // RMS方式より体感に近い値が出る(RMSは声の谷に引っ張られ約5〜10dB低く出るため)。
+    let peak=0;
+    for(let i=0;i<dataArr.length;i++){ const a=Math.abs(dataArr[i]); if(a>peak) peak=a; }
+    return peak<=0?-Infinity:20*Math.log10(peak);
+  }
+  // 例外が起きてもtickループを止めないラッパ
+  function safeDbfs(){
+    try{ if(!analyser) return -Infinity; return currentDbfs(); }
+    catch(e){ return -Infinity; }
+  }
+  // ターン別判定(声の大きさ)
+  function judge(turnNo,db){
+    if(db===null) return {key:"none",label:"声が検出できません",advice:"マイクがミュートになっていないか、共有設定を確認してください。",cls:"v-none"};
+    // 両ターン共通の基準: −12以下=小さすぎ / −12〜−6=ちょうどよい / −6超=割れるかも
+    if(db<TH.normalLow){
+      const a = turnNo===1
+        ? "普段の声で −12dB に届いていません。マイクの音量を上げてください。上げられない場合は、各自このあと自分のDiscordで相手の音量を上げてもOK。"
+        : "大きめの声でも −12dB に届いていません。マイクの音量を上げてください。";
+      return {key:"low",label:"小さすぎかも",advice:a,cls:"v-low"};
+    }
+    if(db>TH.loudHigh){
+      return {key:"high",label:"大きすぎ（割れるかも）",advice:"−6dB を超えています。マイクの音量を少し下げてください。音割れの原因になります。",cls:"v-high"};
+    }
+    return {key:"ok",label:"ちょうどよい",advice:"−12〜−6dB の範囲に収まっています。",cls:"v-ok"};
+  }
+  // ノイズフロア判定
+  function judgeNoise(db){
+    if(db===null||db<-70) return {label:"とても静か（ノイズなし）",cls:"nf-ok"};
+    if(db<=NOISE.clean) return {label:"クリーン（ノイズ問題なし）",cls:"nf-ok"};
+    if(db<=NOISE.warn)  return {label:"わずかにノイズあり（気になればノイズ抑制をON）",cls:"nf-warn"};
+    return {label:"ノイズが大きめ（ファンや環境音に注意・Krisp推奨）",cls:"nf-bad"};
+  }
+
+  // ===== 進行 =====
+  $("startBtn").onclick=()=>{
+    members=currentNames().map(n=>({name:n,normalDb:null,loudDb:null,normalPeak:null,loudPeak:null,noiseDb:null,status:"pending"}));
+    activeIdx=-1; $("setup").classList.add("hidden"); $("check").classList.remove("hidden"); renderRoster();
+    buildZones();
+  };
+
+  function buildZones(){
+    const z=$("zones"); z.innerHTML="";
+    const seg=(from,to,color)=>{
+      const d=document.createElement("div"); d.className="zone";
+      d.style.flex=`0 0 ${(to-from)/(METER_MAX-METER_MIN)*100}%`;
+      d.style.background=color; return d;
+    };
+    z.appendChild(seg(METER_MIN,TH.normalLow,"rgba(240,180,65,.06)"));
+    z.appendChild(seg(TH.normalLow,TH.loudHigh,"rgba(84,214,160,.10)"));
+    const last=seg(TH.loudHigh,METER_MAX,"rgba(239,106,106,.07)"); last.style.flex="1"; z.appendChild(last);
+    // 目盛りラベルを実際のdB位置(pct)に配置。バーと同じ座標系なので整合する。
+    const sc=$("meterScale"); sc.innerHTML="";
+    const label=(text,db,edge)=>{
+      const s=document.createElement("span");
+      s.textContent=text; s.style.left=pct(db)+"%";
+      if(edge) s.className="edge-"+edge;
+      sc.appendChild(s);
+    };
+    label("静か",METER_MIN,"l");
+    label("−12",TH.normalLow);
+    label("−6",TH.loudHigh);
+    label("0",METER_MAX,"r");
+  }
+
+  function renderRoster(){
+    rosterBox.innerHTML="";
+    members.forEach((m,i)=>{
+      const row=document.createElement("div");
+      row.className="member"+(i===activeIdx?" active":"")+(m.status==="done"?" done":"");
+
+      const left=document.createElement("div"); left.className="m-left";
+      const name=document.createElement("div"); name.className="m-name"; name.textContent=m.name;
+      if(m.status==="done"){
+        const st=memberStatus(m.normalDb,m.loudDb);
+        const mk=document.createElement("span"); mk.className="m-mark "+st.cls; mk.textContent=st.mark+" "+st.label; name.appendChild(mk);
+      }
+      left.appendChild(name);
+
+      // 完了者: 結果値とピークを表示
+      if(m.status==="done"){
+        const n=judge(1,m.normalDb), l=judge(2,m.loudDb);
+        const res=document.createElement("div"); res.className="m-result";
+        res.innerHTML=
+          `<span class="m-chip">普段 <b class="${n.cls}">${fmtDb(m.normalDb)}</b> <span class="m-peak">ピーク ${fmtDb(m.normalPeak)}</span></span>`+
+          `<span class="m-chip">大きめ <b class="${l.cls}">${fmtDb(m.loudDb)}</b> <span class="m-peak">ピーク ${fmtDb(m.loudPeak)}</span></span>`;
+        left.appendChild(res);
+      }
+      row.appendChild(left);
+
+      if(i!==activeIdx){
+        const actions=document.createElement("div"); actions.className="m-actions";
+        const b=document.createElement("button"); b.className="btn-ghost";
+        b.textContent=m.status==="done"?"再チェック":"開始 ▶";
+        b.onclick=()=>startMember(i);
+        const x=document.createElement("button"); x.className="m-remove"; x.textContent="×"; x.title="このメンバーを削除";
+        x.onclick=()=>removeMember(i);
+        actions.append(b,x);
+        row.appendChild(actions);
+      }
+      rosterBox.appendChild(row);
+    });
+  }
+  function fmtDb(db){ return (db===null||db===undefined)?"—":Math.round(db)+"dB"; }
+
+  // メンバーの総合ステータス(普段・大きめ両方を見て一番重い問題を採用)
+  function memberStatus(normalDb,loudDb){
+    const k=db=>judge(1,db).key;
+    const k1=k(normalDb), k2=k(loudDb);
+    if(k1==="none"||k2==="none") return {label:"音声未検出",cls:"bad",mark:"✕"};
+    const low=(k1==="low"||k2==="low"), high=(k1==="high"||k2==="high");
+    if(low||high){
+      const issues=[];
+      if(low) issues.push("小さい");
+      if(high) issues.push("大きい");
+      return {label:"要調整（"+issues.join("・")+"）",cls:"warn",mark:"⚠"};
+    }
+    return {label:"OK",cls:"ok",mark:"✓"};
+  }
+
+  function removeMember(i){
+    if(i===activeIdx) return; // 測定中の人は消さない
+    members.splice(i,1);
+    if(members.length===0){
+      // 全員消えたらセットアップへ戻る
+      $("check").classList.add("hidden"); $("setup").classList.remove("hidden");
+      window.scrollTo({top:0,behavior:"smooth"});
+      return;
+    }
+    renderRoster();
+  }
+
+  function startMember(i){
+    activeIdx=i; turn=1; members[i].normalDb=null; members[i].loudDb=null; members[i].noiseDb=null;
+    renderRoster();
+    $("measure").classList.remove("hidden");
+    $("mWho").textContent=members[i].name;
+    $("measure").scrollIntoView({behavior:"smooth",block:"center"});
+    setupTurn();
+  }
+
+  function setupTurn(){
+    $("pip1").className="turn-pip"+(turn===1?" cur":(members[activeIdx].normalDb!==null?" cleared":""));
+    $("pip2").className="turn-pip"+(turn===2?" cur":"");
+    const isNormal=turn===1;
+    $("vMode").textContent=isNormal?"① いつも通りの声で":"② 少し大きめの声で";
+    $("vMode").className="voice-mode "+(isNormal?"normal":"loud");
+    $("scriptBox").className="script-box"+(isNormal?"":" loud");
+    const pool=isNormal?SCRIPTS_NORMAL:SCRIPTS_LOUD;
+    $("scriptText").textContent=pool[Math.floor(Math.random()*pool.length)];
+    // 両ターン共通: 適正帯は −12〜−6。ターゲット線は帯の中央に置き、目安を示す。
+    const tgt=(TH.normalLow+TH.loudHigh)/2;
+    $("meterTarget").style.left=pct(tgt)+"%";
+    $("targetCap").textContent="このあたりが目安";
+    startSequence();
+  }
+
+  // ---- 唯一のバー更新ループ。phaseに応じて挙動を変える ----
+  function startSequence(){
+    // AudioContextがsuspendedなら再開(ユーザー操作起点で許可される)
+    if(audioCtx && audioCtx.state==="suspended"){ audioCtx.resume().catch(()=>{}); }
+    cancelAnimationFrame(rafId); clearTimeout(phaseTimer);
+    barLevel=-100; turnPeak=-100; speakTrail=[]; noiseSamples=[]; measuredNoiseDb=null;
+    $("rDb").textContent="—"; $("rVerdict").textContent="—"; $("rVerdict").className="verdict";
+    $("rAdvice").textContent=""; $("noiseLine").textContent=""; $("nextBtn").disabled=true;
+    $("meterFill").style.width="0%";
+    enterPhase("count");
+    rafId=requestAnimationFrame(tick);
+  }
+
+  function enterPhase(p){
+    phase=p; phaseStart=performance.now();
+    const big=$("phaseBig"), sub=$("phaseSub");
+    big.className="phase-big";
+    if(p==="count"){ big.textContent="3"; sub.textContent="読み上げの準備をしてください"; $("scriptBox").style.opacity=".5"; }
+    else if(p==="silence"){ big.classList.add("silence"); big.textContent="🤫"; sub.textContent="そのまま 黙って ください（ノイズを測ります）"; $("scriptBox").style.opacity=".5"; }
+    else if(p==="speak"){ big.classList.add("speak"); big.textContent="🎤"; sub.textContent="文章を読み上げてください"; $("scriptBox").style.opacity="1"; }
+    // popアニメ再適用
+    big.classList.remove("phase-pop"); void big.offsetWidth; big.classList.add("phase-pop");
+  }
+
+  const decayPerFrame=()=> DECAY_PER_SEC/60; // 概算(60fps)
+  function tick(){
+    if(phase==="result"||phase==="idle") return; // 測定外はバーに触れない
+    const now=performance.now();
+    const elapsed=now-phaseStart;
+
+    if(phase==="count"){
+      // カウントダウン中は音声に触れない(確実に進める)
+      const remain=Math.ceil((PH.count-elapsed)/1000);
+      const shown=Math.max(1,remain);
+      if($("phaseBig").textContent!==String(shown)){
+        $("phaseBig").textContent=String(shown);
+        $("phaseBig").classList.remove("phase-pop"); void $("phaseBig").offsetWidth; $("phaseBig").classList.add("phase-pop");
+      }
+      if(elapsed>=PH.count) enterPhase("silence");
+    }
+    else if(phase==="silence"){
+      const db=safeDbfs();
+      noiseSamples.push(db);
+      if(isFinite(db)&&db>barLevel) barLevel=db; else barLevel=Math.max(isFinite(db)?db:-100, barLevel-decayPerFrame());
+      $("meterFill").style.width=pct(barLevel)+"%"; colorMeter(barLevel);
+      const remain=Math.max(0,Math.ceil((PH.silence-elapsed)/1000));
+      $("phaseSub").textContent=`そのまま黙ってください（あと ${remain} 秒）`;
+      if(elapsed>=PH.silence){ measuredNoiseDb=computeNoiseFloor(noiseSamples); barLevel=-100; enterPhase("speak"); }
+    }
+    else if(phase==="speak"){
+      const db=safeDbfs();
+      if(isFinite(db)&&db>turnPeak) turnPeak=db; // 瞬間ピーク記録
+      // ピークホールド: barLevelが唯一の真実
+      if(isFinite(db)&&db>barLevel) barLevel=db; else barLevel=Math.max(isFinite(db)?db:-100, barLevel-decayPerFrame());
+      $("meterFill").style.width=pct(barLevel)+"%"; colorMeter(barLevel);
+      // 測定中は数字を出さない(確定値は完了時に表示。途中の瞬間値で誤解させない)
+      $("rDb").textContent="測定中…"; $("rDb").classList.add("measuring");
+      $("rVerdict").textContent=""; $("rVerdict").className="verdict";
+      speakTrail.push(barLevel); // バー位置を記録
+      const remain=Math.max(0,Math.ceil((PH.speak-elapsed)/1000));
+      $("phaseSub").textContent=`読み上げを続けてください（あと ${remain} 秒）`;
+      if(elapsed>=PH.speak){ finishTurn(); return; }
+    }
+    rafId=requestAnimationFrame(tick);
+  }
+
+  // 静寂サンプルからノイズフロアを算出(75パーセンタイル: たまの物音を拾いすぎない)
+  function computeNoiseFloor(arr){
+    const v=arr.filter(isFinite); if(v.length<5) return null;
+    v.sort((a,b)=>a-b); return v[Math.floor(v.length*0.75)];
+  }
+  // 発話のバー軌跡から代表値を算出。
+  // バーが実際に到達・保持していた「声の高さ」を表すため、上側の平均をとる。
+  // これをバーにも数字にも使うので、両者は必ず一致する。
+  function speechLevelFromTrail(trail){
+    const back=trail.filter(d=>isFinite(d)&&d>-90);
+    if(back.length<5) return null;
+    back.sort((a,b)=>b-a); // 降順
+    // 上位40%の平均 = 声がしっかり出ている区間の代表。拍間の谷に引っ張られない。
+    const top=back.slice(0,Math.max(1,Math.floor(back.length*0.4)));
+    return top.reduce((a,b)=>a+b,0)/top.length;
+  }
+
+  function finishTurn(){
+    phase="result"; // 残フレームがspeak処理でバーを上書きしないように即変更
+    cancelAnimationFrame(rafId);
+    const db=speechLevelFromTrail(speakTrail);
+    $("rDb").classList.remove("measuring"); // 測定中スタイルを解除
+    // ★バーと数字を全く同じ db で固定する(これが唯一の真実)
+    if(db!==null){
+      barLevel=db;
+      $("meterFill").style.width=pct(db)+"%"; colorMeter(db);
+      $("rDb").textContent=Math.round(db)+" dB";
+    }else{
+      $("meterFill").style.width="0%";
+      $("rDb").textContent="—";
+    }
+    const res=judge(turn,db);
+    $("rVerdict").textContent=res.label; $("rVerdict").className="verdict "+res.cls;
+    $("rAdvice").textContent=res.advice;
+    if(turn===1){
+      members[activeIdx].noiseDb=measuredNoiseDb;
+      const nz=judgeNoise(measuredNoiseDb);
+      $("noiseLine").innerHTML=`静寂時のノイズ: <span class="${nz.cls}">${measuredNoiseDb===null?"—":Math.round(measuredNoiseDb)+"dB"} ・ ${nz.label}</span>`;
+    } else {
+      $("noiseLine").textContent="";
+    }
+    if(turn===1){ members[activeIdx].normalDb=db; members[activeIdx].normalPeak=(turnPeak>-100?turnPeak:null); }
+    else { members[activeIdx].loudDb=db; members[activeIdx].loudPeak=(turnPeak>-100?turnPeak:null); }
+    $("phaseSub").textContent="測定完了";
+    $("phaseBig").textContent="✓"; $("phaseBig").className="phase-big go phase-pop";
+    $("nextBtn").textContent = turn===1 ? "次：大きめの声へ ▶" : "OK、この人は完了";
+    $("nextBtn").disabled=false;
+  }
+
+  $("reMeasure").onclick=()=>{ if(activeIdx>=0) startSequence(); };
+
+  $("backBtn").onclick=()=>{
+    if(activeIdx<0) return;
+    cancelAnimationFrame(rafId);
+    if(turn===2){
+      // 大きめの声 → 普段の声に戻ってやり直し
+      turn=1; setupTurn(); $("measure").scrollIntoView({behavior:"smooth",block:"center"});
+    }else{
+      // 普段の声 → この人の測定をやめてロスターへ戻る
+      phase="idle";
+      $("measure").classList.add("hidden");
+      activeIdx=-1; renderRoster();
+      $("check").scrollIntoView({behavior:"smooth",block:"start"});
+    }
+  };
+
+  $("nextBtn").onclick=()=>{
+    if(activeIdx<0) return;
+    if(turn===1){ turn=2; setupTurn(); $("measure").scrollIntoView({behavior:"smooth",block:"center"}); return; }
+    // turn2完了 → この人を完了に
+    members[activeIdx].status="done";
+    $("measure").classList.add("hidden");
+    activeIdx=-1; renderRoster();
+    if(members.every(m=>m.status==="done")) showDone();
+    else{ const next=members.findIndex(m=>m.status==="pending"); if(next>=0) rosterBox.children[next].scrollIntoView({behavior:"smooth",block:"center"}); }
+  };
+
+  function showDone(){
+    $("check").classList.add("hidden"); $("done").classList.remove("hidden");
+    const list=$("doneList"); list.innerHTML="";
+    members.forEach(m=>{
+      const n=judge(1,m.normalDb), l=judge(2,m.loudDb), nz=judgeNoise(m.noiseDb), st=memberStatus(m.normalDb,m.loudDb);
+      const fmt=(db,r)=>`<span class="${r.cls}">${db===null?"—":Math.round(db)+"dB"}・${r.label}</span>`;
+      const d=document.createElement("div");
+      d.innerHTML=`<span class="nm"><span class="m-mark ${st.cls}">${st.mark}</span> ${escapeHtml(m.name)}</span><span style="text-align:right">普段 ${fmt(m.normalDb,n)} <span style="color:var(--ink-faint);font-size:12px">(ピーク${fmtDb(m.normalPeak)})</span> ／ 大 ${fmt(m.loudDb,l)} <span style="color:var(--ink-faint);font-size:12px">(ピーク${fmtDb(m.loudPeak)})</span><br><span style="font-size:12.5px;color:var(--ink-faint)">ノイズ: <span class="${nz.cls}">${m.noiseDb===null?"—":Math.round(m.noiseDb)+"dB"}</span></span></span>`;
+      list.appendChild(d);
+    });
+  }
+
+  $("addMemberCheck").onclick=()=>{
+    const name=prompt("追加するメンバーの名前を入力してください");
+    if(name && name.trim()){
+      members.push({name:name.trim(),normalDb:null,loudDb:null,normalPeak:null,loudPeak:null,noiseDb:null,status:"pending"});
+      renderRoster();
+    }
+  };
+
+  $("resetBtn").onclick=()=>{
+    members.forEach(m=>{m.status="pending";m.normalDb=null;m.loudDb=null;m.noiseDb=null;});
+    $("done").classList.add("hidden"); $("check").classList.remove("hidden"); activeIdx=-1; renderRoster();
+  };
+
+  // ===== メーター描画 =====
+  function pct(db){ if(db===-Infinity||db===null) return 0; const p=(db-METER_MIN)/(METER_MAX-METER_MIN)*100; return Math.max(0,Math.min(100,p)); }
+  function colorMeter(db){
+    const f=$("meterFill"); let c1,c2;
+    if(db<TH.normalLow){ c1="#caa23a"; c2="var(--low)"; }
+    else if(db<=TH.loudHigh){ c1="#3aa"; c2="var(--ok)"; }
+    else{ c1="#c25"; c2="var(--high)"; }
+    f.style.background=`linear-gradient(90deg,${c1},${c2})`;
+  }
+  function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+})();
+</script>
+</body>
+</html>
