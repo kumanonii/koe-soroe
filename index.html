@@ -177,6 +177,7 @@
   .measure.fullscreen .measure-actions{max-width:760px;width:100%;margin-top:clamp(8px,1.5vh,16px)}
   .measure.fullscreen .measure-actions button{font-size:clamp(14px,1.5vw,17px);padding:clamp(10px,1.2vh,14px)}
   .measure.fullscreen .trouble{max-width:760px;width:100%;box-sizing:border-box}
+  .measure.fullscreen .skip-note{max-width:760px;width:100%;box-sizing:border-box;font-size:clamp(15px,2vw,20px)}
   body.measuring-active{overflow:hidden}
   /* turn indicator */
   .turns{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
@@ -217,6 +218,8 @@
   @keyframes pop{0%{transform:scale(.7);opacity:.3}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 
   .noise-line{font-size:14.5px;margin-top:10px;min-height:1.2em;font-weight:600}
+  .skip-note{margin-top:14px;padding:12px 16px;border-radius:10px;font-size:15px;line-height:1.6;background:rgba(122,162,255,.1);border:1px solid var(--accent-soft);color:var(--ink);text-align:center;font-weight:700}
+  .skip-note b{color:var(--accent);font-size:16px}
   .noise-line .nf-ok{color:var(--ok)}
   .noise-line .nf-warn{color:var(--low)}
   .noise-line .nf-bad{color:var(--high)}
@@ -424,7 +427,7 @@
         <span class="cg-sep">▶</span>
         <span class="cg-step"><b>②</b> 定型文を読み上げる<span class="cg-sub">声の大きさを測定</span></span>
       </div>
-      <div class="cg-note">開始は<b>全員でせーの</b>で押してください。</div>
+      <div class="cg-note">開始は<b>全員でせーの</b>で押してください。途中で「小さすぎ」などが出ても、<b>まず全員分チェックしてから</b>まとめて調整するのがおすすめです。</div>
       <div class="cg-topic">
         <div class="cg-topic-title">🎙️ お題のカテゴリを選ぶ（全員で同じものを選んでください）</div>
         <div class="topic-list" id="topicList"></div>
@@ -462,6 +465,10 @@
         <div class="verdict" id="rVerdict">準備中…</div>
         <div class="advice" id="rAdvice"></div>
         <div class="noise-line" id="noiseLine"></div>
+      </div>
+
+      <div class="skip-note" id="skipNote" style="display:none">
+        👉 <b>調整はあとで！</b> まず全員分チェックしてから、まとめて調整しましょう。
       </div>
 
       <details class="trouble" id="measureTrouble" style="display:none">
@@ -864,6 +871,7 @@
     $("rAdvice").textContent=""; $("noiseLine").textContent=""; $("nextBtn").disabled=true;
     $("meterFill").style.width="0%";
     { const tr=$("measureTrouble"); if(tr){ tr.style.display="none"; tr.open=false; } }
+    $("skipNote").style.display="none";
     enterPhase("count");
     rafId=requestAnimationFrame(tick);
   }
@@ -972,13 +980,19 @@
     const res=judge(db);
     $("rVerdict").textContent=res.label; $("rVerdict").className="verdict "+res.cls;
     $("rAdvice").textContent=res.advice;
+    // 適正でない+まだ未チェックの人がいる → 「まず全員分」案内を目立つボックスで
+    const pending=members.filter((m,i)=>i!==activeIdx&&m.status==="pending").length;
+    const sn=$("skipNote");
+    if(res.key!=="ok"&&pending>0){ sn.style.display=""; }
+    else { sn.style.display="none"; }
     members[activeIdx].noiseDb=measuredNoiseDb;
     const nz=judgeNoise(measuredNoiseDb);
     $("noiseLine").innerHTML=`静寂時のノイズ: <span class="${nz.cls}">${measuredNoiseDb===null?"—":Math.round(measuredNoiseDb)+"dB"} ・ ${nz.label}</span>`;
     members[activeIdx].normalDb=db; members[activeIdx].normalPeak=(turnPeak>-100?turnPeak:null);
     $("phaseSub").textContent="測定完了";
     $("phaseBig").textContent="✓"; $("phaseBig").className="phase-big go phase-pop";
-    $("nextBtn").textContent="OK、この人は完了";
+    // ボタン: 残りがいれば「次の人へ」、最後なら「結果を見る」
+    $("nextBtn").textContent = pending>0 ? "一旦次の人へ ▶" : "全員チェック完了 → 結果を見る";
     $("nextBtn").disabled=false;
     // 適正でない結果のときだけ、対処のチャートを出す(自分だけ違う場合の判断材料)
     const tr=$("measureTrouble");
