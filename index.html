@@ -44,13 +44,28 @@
     border:1px solid var(--line);border-radius:16px;padding:20px;
     box-shadow:var(--shadow);margin-bottom:16px;
   }
-  .card h2{font-size:15px;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase;margin:0 0 16px;font-weight:700}
+  .card h2{font-size:17px;letter-spacing:.08em;color:var(--ink);margin:0 0 16px;font-weight:800}
 
   .premise{
     border:1px solid var(--accent-soft);background:rgba(122,162,255,.08);
     border-radius:14px;padding:16px 18px;margin-bottom:18px;font-size:15px;color:#cdd8ef;line-height:1.7;
   }
   .premise b{color:#eef3ff}
+
+  /* 使う前の最重要ポイント */
+  .keypoints{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .kp{display:flex;align-items:flex-start;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kp-ico{font-size:26px;line-height:1.2;flex:none}
+  .kp-txt{font-size:14.5px;line-height:1.55;color:var(--ink-dim)}
+  .kp-txt b{color:var(--ink);font-size:15.5px}
+  .kp-sub{display:block;font-size:12px;color:var(--ink-faint);margin-top:3px}
+
+  /* くわしい使い方(折りたたみ) */
+  .intro-more{margin-bottom:22px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:2px 16px}
+  .intro-more summary{cursor:pointer;padding:13px 0;font-size:14px;font-weight:700;color:var(--accent);list-style-position:inside}
+  .intro-more summary:hover{color:#9cb8ff}
+  .intro-body{padding:4px 0 14px;font-size:14px;color:var(--ink-dim);line-height:1.7}
+  .intro-body b{color:var(--ink)}
 
   .flow-note{
     background:rgba(122,162,255,.05);border:1px solid var(--accent-soft);border-radius:14px;
@@ -82,6 +97,7 @@
   .name-row .rm:hover{color:var(--high)}
   .add-name{color:var(--accent);background:none;font-size:15px;font-weight:700;padding:8px 2px;text-align:left}
   .hint{font-size:14px;color:var(--ink-dim);margin-top:6px;line-height:1.65}
+  .hint.hint-warn{color:#f3e3c4;background:rgba(240,180,65,.08);border:1px solid rgba(240,180,65,.25);border-radius:8px;padding:10px 12px}
   .hint b{color:var(--ink)}
 
   .cap-status{display:flex;align-items:center;gap:10px;font-size:15px;margin-top:14px;color:var(--ink-dim)}
@@ -90,6 +106,24 @@
   @keyframes pulse{50%{opacity:.45}}
 
   .roster{display:flex;flex-direction:column;gap:12px}
+  .check-cap{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#0c0e13;border:1px solid var(--line);border-radius:10px;margin-bottom:14px;font-size:13.5px;color:var(--ink-dim)}
+  .check-cap .dot{width:9px;height:9px}
+  .btn-cap-redo{margin-left:auto;padding:6px 12px !important;font-size:12.5px !important;flex:none}
+  .check-guide{background:rgba(122,162,255,.06);border:1px solid var(--accent-soft);border-radius:12px;padding:14px 16px;margin-bottom:16px}
+  .cg-title{font-size:13.5px;font-weight:800;color:var(--accent);margin-bottom:12px}
+  .cg-flow{display:flex;align-items:stretch;gap:8px;margin-bottom:10px}
+  .cg-step{flex:1;background:#0c0e13;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:3px}
+  .cg-step b{color:var(--accent);font-size:15px}
+  .cg-step .cg-sub{font-size:11.5px;color:var(--ink-faint);font-weight:400}
+  .cg-sep{display:flex;align-items:center;color:var(--ink-faint);font-size:12px}
+  .cg-note{font-size:12.5px;color:var(--ink-dim);line-height:1.6}
+  .cg-note b{color:var(--low)}
+  .cg-topic{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .cg-topic-title{font-size:13px;font-weight:700;color:var(--ink-dim);margin-bottom:8px}
+  .topic-list{display:flex;flex-wrap:wrap;gap:6px}
+  .topic-chip{background:#0c0e13;border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:13.5px;color:var(--ink-dim);cursor:pointer;transition:.15s;font-family:inherit}
+  .topic-chip:hover{border-color:var(--accent-soft);color:var(--ink)}
+  .topic-chip.selected{background:rgba(122,162,255,.15);border-color:var(--accent);color:#eef3ff;font-weight:700}
   .member{display:flex;align-items:center;gap:14px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px 16px}
   .member.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 8px 24px rgba(122,162,255,.18)}
   .member.done{opacity:.85}
@@ -113,6 +147,37 @@
   .member .btn-ghost{flex:none}
 
   .measure{margin-top:10px;padding-top:18px;border-top:1px solid var(--line)}
+
+  /* 測定中の全画面オーバーレイ */
+  .measure.fullscreen{
+    position:fixed;inset:0;z-index:1000;margin:0;padding:16px clamp(16px,4vw,60px);
+    border-top:none;background:linear-gradient(180deg,#0e1116,#090b0f);
+    overflow-y:auto;display:flex;flex-direction:column;align-items:center;
+    max-width:none;
+  }
+  .measure.fullscreen .instruct{font-size:clamp(22px,3.5vw,34px)}
+  .measure.fullscreen .voice-mode{font-size:clamp(15px,2vw,22px);margin-bottom:clamp(6px,1vh,14px)}
+  .measure.fullscreen .phase-banner{min-height:auto;margin:clamp(4px,1vh,10px) 0;width:100%;max-width:900px}
+  .measure.fullscreen .phase-big{font-size:clamp(56px,10vw,110px)}
+  .measure.fullscreen .phase-big.go{font-size:clamp(44px,7vw,72px)}
+  .measure.fullscreen .phase-big.silence,.measure.fullscreen .phase-big.speak{font-size:clamp(36px,6vw,64px)}
+  .measure.fullscreen .phase-sub{font-size:clamp(16px,2.2vw,24px);margin-top:clamp(4px,0.8vh,10px)}
+  .measure.fullscreen .script-box{padding:clamp(10px,1.5vw,18px);margin-bottom:clamp(6px,1vh,14px);max-width:900px;width:100%;box-sizing:border-box}
+  .measure.fullscreen .script-label{font-size:clamp(11px,1.2vw,14px)}
+  .measure.fullscreen .script-text{font-size:clamp(20px,3vw,32px);line-height:1.45}
+  .measure.fullscreen .mute-note{font-size:clamp(13px,1.4vw,17px);margin-bottom:clamp(6px,1vh,12px)}
+  .measure.fullscreen .meter-shell{height:clamp(36px,4.5vh,54px);max-width:900px;width:100%;box-sizing:border-box}
+  .measure.fullscreen .meter-scale{max-width:900px;width:100%}
+  .measure.fullscreen .readout{margin-top:clamp(6px,1vh,14px)}
+  .measure.fullscreen .readout .db{font-size:clamp(34px,5.5vw,58px)}
+  .measure.fullscreen .readout .db.measuring{font-size:clamp(18px,2.5vw,26px)}
+  .measure.fullscreen .readout .verdict{font-size:clamp(16px,2.2vw,24px)}
+  .measure.fullscreen .readout .advice{font-size:clamp(13px,1.4vw,16px);max-width:760px;margin-left:auto;margin-right:auto}
+  .measure.fullscreen .noise-line{font-size:clamp(13px,1.4vw,16px)}
+  .measure.fullscreen .measure-actions{max-width:760px;width:100%;margin-top:clamp(8px,1.5vh,16px)}
+  .measure.fullscreen .measure-actions button{font-size:clamp(14px,1.5vw,17px);padding:clamp(10px,1.2vh,14px)}
+  .measure.fullscreen .trouble{max-width:760px;width:100%;box-sizing:border-box}
+  body.measuring-active{overflow:hidden}
   /* turn indicator */
   .turns{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
   .turn-pip{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--ink-faint);padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:#0c0e13}
@@ -130,13 +195,13 @@
 
   /* script to read aloud — 目立たせる */
   .script-box{
-    background:linear-gradient(180deg,#11151d,#0c0e13);border:1px solid var(--accent-soft);border-left:4px solid var(--accent);
-    border-radius:12px;padding:18px 20px;margin-bottom:16px;
+    background:linear-gradient(180deg,#141a26,#0c0e13);border:1px solid var(--accent-soft);border-left:5px solid var(--accent);
+    border-radius:12px;padding:20px 22px;margin-bottom:16px;
   }
   .script-box.loud{border-left-color:var(--low);border-color:rgba(240,180,65,.35)}
-  .script-label{font-size:12px;letter-spacing:.1em;color:var(--accent);margin-bottom:8px;font-weight:800}
+  .script-label{font-size:12.5px;letter-spacing:.08em;color:var(--accent);margin-bottom:9px;font-weight:800}
   .script-box.loud .script-label{color:var(--low)}
-  .script-text{font-size:21px;line-height:1.75;color:#fff;font-weight:700}
+  .script-text{font-size:23px;line-height:1.7;color:#fff;font-weight:800}
 
   .mute-note{font-size:14px;color:var(--low);text-align:center;margin:0 0 16px;font-weight:700}
 
@@ -147,7 +212,7 @@
   .phase-big.go{color:var(--ok);font-size:52px}
   .phase-big.silence{color:var(--accent);font-size:46px}
   .phase-big.speak{color:var(--low);font-size:46px}
-  .phase-sub{font-size:17px;color:var(--ink);margin-top:10px;font-weight:700}
+  .phase-sub{font-size:19px;color:var(--ink);margin-top:12px;font-weight:800;line-height:1.5}
   .phase-pop{animation:pop .4s ease}
   @keyframes pop{0%{transform:scale(.7);opacity:.3}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 
@@ -204,6 +269,32 @@
   .dn-line-peak{color:var(--ink-faint);font-size:12px;text-align:right}
   .done-actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
   .done-actions button{flex:1;min-width:140px}
+
+  /* trouble flowchart */
+  .trouble{max-width:480px;margin:20px auto 0;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:4px 16px}
+  .trouble summary{cursor:pointer;padding:12px 0;font-size:14.5px;font-weight:700;color:var(--accent);list-style-position:inside}
+  .trouble summary:hover{color:#9cb8ff}
+  .trouble-lead{font-size:13px;color:var(--ink-dim);margin:4px 0 14px;line-height:1.6}
+  .flow{display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0}
+  .flow-box{background:#0c0e13;border:1px solid var(--line);border-radius:9px;padding:10px 14px;font-size:13.5px;text-align:center;line-height:1.5;max-width:100%}
+  .flow-start{border-color:var(--accent-soft);background:rgba(122,162,255,.06);font-weight:700}
+  .flow-q{background:#11151d;border:1px solid var(--accent-soft);border-radius:9px;padding:11px 14px;font-size:13.5px;text-align:center;font-weight:700;color:#dfe7ff;line-height:1.5}
+  .flow-arrow{color:var(--ink-faint);font-size:12px;line-height:1}
+  .flow-split{display:flex;gap:10px;width:100%;margin-top:4px}
+  .flow-branch{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+  .flow-yn{font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:999px}
+  .flow-yn.yes{color:var(--ok);background:rgba(84,214,160,.12)}
+  .flow-yn.no{color:var(--low);background:rgba(240,180,65,.12)}
+  .flow-action{font-weight:700}
+  .flow-branch .flow-action{border-color:var(--accent-soft)}
+  .flow-sub{display:block;font-size:11.5px;color:var(--ink-faint);font-weight:400;margin-top:3px}
+  .trouble-note{font-size:12.5px;color:var(--ink-dim);line-height:1.65;margin:14px 0 10px;padding-top:12px;border-top:1px solid var(--line)}
+  .trouble-note b{color:var(--ink)}
+  @media (max-width:480px){
+    .flow-split{flex-direction:column;gap:14px}
+    .flow-branch{border-top:1px dashed var(--line);padding-top:12px}
+    .flow-branch:first-child{border-top:none;padding-top:0}
+  }
   .host-summary{text-align:left;max-width:440px;margin:20px auto 0;background:var(--panel-2);border:1px solid var(--accent-soft);border-radius:12px;padding:16px 18px}
   .hs-title{font-size:15px;font-weight:800;color:var(--accent);margin-bottom:6px}
   .hs-title.hs-ok{color:var(--ok)}
@@ -213,6 +304,15 @@
   .hs-row.bad{background:rgba(239,106,106,.1)}
   .hs-name{font-weight:800}
   .hs-action{text-align:right;font-weight:600;color:var(--ink)}
+  .overall{margin-top:14px;padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2)}
+  .ov-title{font-size:14px;font-weight:800;color:var(--accent);margin-bottom:10px;letter-spacing:.04em}
+  .ov-row{font-size:13.5px;line-height:1.65;padding:8px 10px;border-radius:8px;margin-bottom:6px}
+  .ov-row:last-child{margin-bottom:0}
+  .ov-row.ov-ok{color:var(--ok)}
+  .ov-row.ov-warn{color:#f3e3c4;background:rgba(240,180,65,.1)}
+  .ov-row.ov-info{color:var(--ink-dim)}
+  .ov-row.ov-tip{color:var(--ink-dim);font-size:12.5px;border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+  .ov-row b{font-weight:800}
 
   .hidden{display:none}
   footer{margin-top:34px;text-align:center;font-size:14px;color:var(--ink-faint);line-height:1.9}
@@ -237,32 +337,45 @@
 <div class="wrap">
 
   <div class="brand"><h1>こえそろえ</h1><span class="romaji">koe-soroe</span></div>
-  <p class="lede">コラボ前の音量チェックを、全員で・一斉に・数値を見ながら。</p>
+  <p class="lede">コラボ前に、全員の声の大きさをそろえるツール。</p>
 
-  <div class="premise">
-    <b>これは何のツール？</b><br>
-    これまでコラボ前の音量合わせは、配信者がひとりでOBSのメーターをなんとなく目視して、「もう少し大きく」と耳で判断する……というやり方が多かったと思います。
-    このツールは、それを<b>参加者みんなで一斉に、同じガイドと数値を見ながら</b>できるようにするものです。
-    だれの声が小さい・大きい・割れそうかが数値ではっきり分かり、配信に全員の声をきれいに乗せられます。
-    「マイクが小さいまま、誰も気づかず配信が終わった」をなくします。
+  <!-- 使う前の最重要ポイント(アイコンで一目) -->
+  <div class="keypoints">
+    <div class="kp">
+      <div class="kp-ico">👥</div>
+      <div class="kp-txt"><b>全員でこのページを開く</b><br>配信する人みんなで開きます。配信しないメンバーには画面共有で指示を見せながらチェックしましょう。</div>
+    </div>
+    <div class="kp">
+      <div class="kp-ico">🤝</div>
+      <div class="kp-txt"><b>開始は「せーの」で一斉に</b><br>同じ人の開始ボタンを同時に押す</div>
+    </div>
+    <div class="kp">
+      <div class="kp-ico">🔊</div>
+      <div class="kp-txt"><b>Discordのスピーカー音量を100%に</b><br>みんなの結果がそろいやすくなります<br><span class="kp-sub">設定 →「音声・ビデオ」→ スピーカー音量</span></div>
+    </div>
   </div>
 
-  <div class="premise" style="border-color:rgba(240,180,65,.4);background:rgba(240,180,65,.07);color:#f3e3c4">
-    <b style="color:var(--low)">⚠ 全員でこのページを開き、開始ボタンは「せーの」で一斉に押してください。</b><br>
-    このツールは、ボタンを押した人が<b>その瞬間に聞いている声</b>を測ります。各自バラバラに押すと測るタイミングがズレるので、
-    チェックする人の番になったら<b>全員が同時に同じ人の「開始」を押す</b>のがコツです。自分の声は自分では測れないので、他の人に見てもらいましょう。
-  </div>
+  <details class="intro-more">
+    <summary>くわしい使い方・流れを見る</summary>
+    <div class="intro-body">
+      <p><b>どんなツール？</b><br>
+      コラボ相手の声が、全員同じくらいの大きさに聞こえているかチェックするツールです。「誰かだけ小さい」「一人だけ声が飛び出している」を、配信が始まる前に見つけて直します。</p>
 
-  <div class="flow-note">
-    <div class="flow-title">チェックの流れ（ひとりにつき2回ずつ）</div>
-    <ol class="flow-steps">
-      <li>チェックする人を決め、<b>全員で「せーの」でその人の「開始」を一斉に押す</b></li>
-      <li><b>3・2・1</b> のカウントダウンで準備</li>
-      <li>カウント後、<b>3秒だけ黙る</b> → ノイズ（雑音）をチェック</li>
-      <li>合図が出たら<b>その人だけ文章を読み上げる</b> → 声の大きさをチェック</li>
-    </ol>
-    <div class="flow-tail">これを「① いつもの声」「② 少し大きめの声」の2回おこないます。全員ぶん終わればそろえ完了です。</div>
-  </div>
+      <p style="margin-top:10px"><b>このツールでやること / OBSでやること</b><br>
+      <span style="color:var(--ok)">✓ このツール</span>：相手の声どうしを<b>揃える</b>（全員が同じくらいの大きさか確認）<br>
+      <span style="color:var(--accent)">✓ OBS</span>：揃った全体を、<b>自分の声との相対バランスで調整</b>する（自分が主役、相手は少し控えめに）</p>
+
+      <div class="flow-title" style="margin-top:16px">チェックの流れ（ひとりにつき1回ずつ）</div>
+      <ol class="flow-steps">
+        <li>チェックする人を決め、<b>全員で「せーの」でその人の「開始」を一斉に押す</b></li>
+        <li><b>3・2・1</b> のカウントダウンで準備</li>
+        <li>カウント後、<b>3秒だけ黙る</b>（ノイズをチェック）</li>
+        <li>合図が出たら<b>その人だけ画面の文を読み上げる</b>（声の大きさをチェック）</li>
+      </ol>
+      <p class="flow-tail" style="margin-top:10px">全員ぶん終わればそろえ完了です。自分の声は自分では測れないので、ほかの人に見てもらいましょう。</p>
+
+    </div>
+  </details>
 
   <!-- SETUP -->
   <section id="setup" class="card">
@@ -273,35 +386,54 @@
 
     <h2 style="margin-top:22px">② Discordの音声を取り込む</h2>
     <div class="hint" style="margin-bottom:12px">
-      下のボタンを押すと共有画面が出ます。<b>「画面全体」を選び、「システム音声（音声も共有）」をオンにして</b>共有してください。
-      ※「ウィンドウ」でアプリ単体を選ぶと音声が取り込めないことがあります。確実なのは「画面全体」です。
+      下のボタンを押すと共有画面が出ます。「Chromeタブ」「ウィンドウ」「画面全体」のどれを選んでもOKです。<b>「システム音声（音声も共有）」をオンにして</b>共有してください。
+    </div>
+    <div class="hint hint-warn" style="margin-bottom:8px">
+      ⚠ どの方法でも<b>PC全体の音</b>（通知音・BGM・ゲーム音など）<b>が取り込まれます</b>。チェック中は<b>Discord以外の音を止めるかミュートに</b>してください。
+    </div>
+    <div class="hint hint-warn" style="margin-bottom:12px">
+      ⚠ 共有の選択画面には<b>タブ名やウィンドウ名が表示されます</b>。Discordで画面共有中の場合は選択画面も相手に見えるので、<b>音声の取り込みはDiscordの画面共有を始める前に</b>済ませておきましょう。
     </div>
     <button class="btn-ghost" id="capBtn">🔊 Discordの音声を取り込む</button>
     <div class="cap-status"><span class="dot" id="capDot"></span><span id="capText">まだ取り込んでいません</span></div>
+    <div class="hint">※ 音声はブラウザ内でのみ処理され、外部への送信は行いません。</div>
 
     <button class="btn-primary" id="startBtn" style="margin-top:22px" disabled>チェックを始める</button>
 
     <details class="faq">
-      <summary>うまくいかないとき・ひとりで確認したいとき</summary>
-      <p><b>メーターが動かない：</b>共有のときに「システム音声／音声も共有」のチェックを入れ忘れていないか確認。入れ直すにはもう一度「取り込む」を押します。「画面全体」を選ぶのが確実です。</p>
+      <summary>うまくいかないとき・セキュリティについて</summary>
+      <p><b>メーターが動かない：</b>共有のときに「システム音声／音声も共有」のチェックを入れ忘れていないか確認。入れ直すにはもう一度「取り込む」を押します。</p>
       <p><b>音声共有の選択肢が出ない：</b>ブラウザはChrome系（Chrome / Edge）推奨。Firefoxやスマホ版は音声共有に未対応のことがあります。</p>
-      <p><b>自分の声が0のまま：</b>正常です。自分の声は自分のDiscordから返らないため測れません。基本は他の人に見てもらってください。</p>
-      <p><b>ひとりで自分の声を確認したいとき：</b>Discordの設定 →「音声・ビデオ」→「マイクテスト」ボタンを押します。自分の声が返ってくる状態でこのツールに取り込めば、自分の声も測れます。※テスト中はVCの通話が一時的に止まるので、コラボ前のひとり確認向けです。声が返ってくるので読み上げ文章に集中するとやりやすいです。最終確認は他の人にも見てもらうのが確実です。</p>
+      <p><b>自分の声が0のまま：</b>正常です。自分の声は自分のDiscordから返らないため測れません。他の人の画面で確認してもらいましょう。</p>
+      <p><b>画面共有でデータが外部に送られる？：</b>いいえ。このツールは画面共有の音声だけを使用し、映像は読み取っていません。データはブラウザ内でのみ処理され、外部への送信は行っていません。ソースコードはGitHubで公開されています。</p>
     </details>
   </section>
 
   <!-- CHECK -->
   <section id="check" class="card hidden">
     <h2>チェック中</h2>
+    <div class="check-cap" id="checkCap">
+      <span class="dot" id="checkCapDot"></span>
+      <span id="checkCapText">取り込み中</span>
+      <button class="btn-ghost btn-cap-redo" id="capRedoBtn">🔊 音声を取り込み直す</button>
+    </div>
+    <div class="check-guide">
+      <div class="cg-title">▶ 開始ボタンを押すと、こう進みます</div>
+      <div class="cg-flow">
+        <span class="cg-step"><b>①</b> 3秒だけ黙る<span class="cg-sub">ノイズを測定</span></span>
+        <span class="cg-sep">▶</span>
+        <span class="cg-step"><b>②</b> 定型文を読み上げる<span class="cg-sub">声の大きさを測定</span></span>
+      </div>
+      <div class="cg-note">開始は<b>全員でせーの</b>で押してください。</div>
+      <div class="cg-topic">
+        <div class="cg-topic-title">🎙️ お題のカテゴリを選ぶ（全員で同じものを選んでください）</div>
+        <div class="topic-list" id="topicList"></div>
+      </div>
+    </div>
     <div class="roster" id="roster"></div>
     <button class="add-name" id="addMemberCheck" style="margin-top:12px">＋ メンバーを追加</button>
 
     <div class="measure hidden" id="measure">
-      <div class="turns">
-        <div class="turn-pip" id="pip1"><span class="n">1</span>普段の声</div>
-        <div class="turn-pip" id="pip2"><span class="n">2</span>大きめの声</div>
-      </div>
-
       <div class="instruct"><span class="who" id="mWho"></span> さんの番です</div>
       <div class="voice-mode" id="vMode"></div>
 
@@ -312,7 +444,7 @@
       </div>
 
       <div class="script-box" id="scriptBox">
-        <div class="script-label">読み上げてください</div>
+        <div class="script-label">〇〇に自分の答えを入れて話してください</div>
         <div class="script-text" id="scriptText"></div>
       </div>
 
@@ -332,6 +464,33 @@
         <div class="noise-line" id="noiseLine"></div>
       </div>
 
+      <details class="trouble" id="measureTrouble" style="display:none">
+        <summary>あなたの画面だけ結果が違う場合は？</summary>
+        <p class="trouble-lead">他の配信者が測った同じ人の結果と、自分の結果が食い違うことがあります。そのときの考え方です。</p>
+        <div class="flow">
+          <div class="flow-box flow-start">この人が「小さすぎ／大きすぎ」と出た</div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-q">他の配信者も、同じ人を<br>同じように指摘している？</div>
+          <div class="flow-split">
+            <div class="flow-branch">
+              <div class="flow-yn yes">はい（みんな同じ）</div>
+              <div class="flow-arrow">▼</div>
+              <div class="flow-box">その人自身のマイクの問題</div>
+              <div class="flow-arrow">▼</div>
+              <div class="flow-box flow-action">本人がマイク音量を調整<br><span class="flow-sub">→ 全員の配信できれいになる</span></div>
+            </div>
+            <div class="flow-branch">
+              <div class="flow-yn no">いいえ（自分だけ違う）</div>
+              <div class="flow-arrow">▼</div>
+              <div class="flow-box">あなたのDiscord設定が原因<br><span class="flow-sub">その人の個別音量・出力音量など</span></div>
+              <div class="flow-arrow">▼</div>
+              <div class="flow-box flow-action">あなたのDiscordでその人の音量を調整<br><span class="flow-sub">→ あなたの配信用。あなただけ直せばOK</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="trouble-note">この測定結果は「<b>あなたの配信に乗る音</b>」です。配信者ごとに結果が違うのは正常で、各自が自分の結果に合わせて調整すれば、全員の配信できれいに揃います。</p>
+      </details>
+
       <div class="measure-actions">
         <button class="btn-ghost" id="backBtn">◀ 戻る</button>
         <button class="btn-ghost" id="reMeasure">測り直す</button>
@@ -349,6 +508,7 @@
       <p style="color:var(--ink-dim);font-size:14px;margin:0">結果をまとめました。よいコラボを！</p>
       <div class="host-summary" id="hostSummary"></div>
       <div class="done-list" id="doneList"></div>
+
       <div class="done-actions">
         <button class="btn-ghost" id="addMemberDone">＋ メンバーを追加</button>
         <button class="btn-ghost" id="resetBtn">もう一度チェックする（全員）</button>
@@ -368,40 +528,35 @@
 
   // ===== 評価しきい値（dBFS）=====
   // 普段の声: -12 以上あってほしい / 大きめの声: -6 を超えないでほしい
-  const TH = { silence:-45, normalLow:-12, loudHigh:-6 };
+  // 相手(コラボ参加者)の声の適正範囲。配信では自分の声(-6〜-10dB)より一回り小さい
+  // -15〜-10dBにすると、リスナーが聞き疲れしにくい。silenceは無音判定の閾値。
+  const TH = { silence:-45, low:-15, high:-10 };
   // ノイズフロア判定: 静寂中のレベルがこれより上だと警告
   const NOISE = { clean:-50, warn:-42 }; // clean以下=きれい, warn以下=わずか, 超=ノイズ大
   const METER_MIN=-60, METER_MAX=0;
   // 各フェーズの長さ(ms)
-  const PH = { count:3000, silence:3000, speak:6000 };
-  const DECAY_PER_SEC = 16; // ピークホールドの減衰(dB/秒)
+  const PH = { count:3000, silence:3000, speak:8000 }; // speakは自由発話の間・遅延を見て長め
+  const DECAY_PER_SEC = 6;  // ピークホールドの減衰(dB/秒)。DAW同様ゆっくり下げて安定表示
+  const HOLD_SEC = 0.8;     // ピーク到達後この秒数は値を保持してから減衰
+  // 画面共有の音量補正。検証の結果、条件を揃えればマイク入力と完全一致するため補正不要(0)。
+  const INPUT_GAIN_DB = 0;
 
-  // ===== 読み上げ文章 =====
-  // 普段の声ターン: 落ち着いた普通のトーン
-  const SCRIPTS_NORMAL=[
-    "今日はこのコラボに来てくれてありがとう。よろしくお願いします。",
-    "音声のテストをしています。いつもの話すくらいの声で読んでいます。",
-    "今の声が、ちょうどいい大きさで届いているか確認しています。",
-    "あいうえお、かきくけこ。普通のトーンで読み上げています。",
-    "コラボが始まる前に、声の大きさをそろえているところです。",
-  ];
-  // 大きめの声ターン: テンション高め
-  const SCRIPTS_LOUD=[
-    "それじゃあ、いっきまーす！今日もよろしくお願いします！",
-    "うわー！すごい！やったー！と、大きめの声を出しています！",
-    "ここがいちばん盛り上がるところ！声を張って読んでいます！",
-    "せーの、いえーい！テンション高めの声量チェックです！",
-    "おおっと！ここで大きな声！音割れしないかチェック中です！",
-  ];
+  // ===== お題(カテゴリ+定型文テンプレート) =====
+  // 「こんにちは、〇〇です。好きな[カテゴリ]は〇〇です！今日はよろしくお願いします！」
+  // のように、定型文の中にカテゴリを入れて読む。誰でも言えて楽しい。
+  const TOPICS=["食べ物","動物","ゲーム","音楽","映画","場所","季節","キャラクター","スポーツ","飲み物"];
+  const TOPIC_TEMPLATE=(cat)=>`こんにちは、〇〇です。\n好きな${cat}は〇〇です！\n今日はよろしくお願いします！`;
+  let currentTopic=null; // 選択されたお題カテゴリ
 
   // ===== 状態 =====
-  let members=[]; // {name, normalDb, loudDb, noiseDb, status}
-  let activeIdx=-1, turn=1; // turn: 1=普段, 2=大きめ
-  let stream=null, audioCtx=null, analyser=null, sourceNode=null, dataArr=null;
+  let members=[]; // {name, normalDb, normalPeak, noiseDb, status}
+  let activeIdx=-1;
+  let stream=null, audioCtx=null, analyser=null, sourceNode=null, gainNode=null, dataArr=null;
   let rafId=null, phaseTimer=null;
   let phase="idle"; // idle/count/silence/speak/result
   let phaseStart=0;
   let barLevel=-100;        // ピークホールド: バーの唯一の真実
+  let barHeldFor=0;         // ピーク到達後の経過フレーム(保持時間管理)
   let turnPeak=-100;        // そのターンの瞬間最大dB(ピーク)
   let speakTrail=[];        // 発話フェーズ中のバー位置の記録
   let noiseSamples=[];      // 静寂フェーズの音量サンプル
@@ -430,7 +585,7 @@
     try{
       const s=await navigator.mediaDevices.getDisplayMedia({
         video:true,
-        audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}
+        audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:2}
       });
       if(s.getAudioTracks().length===0){
         s.getTracks().forEach(t=>t.stop());
@@ -439,22 +594,51 @@
       }
       if(stream) stream.getTracks().forEach(t=>t.stop());
       stream=s;
-      s.getAudioTracks()[0].addEventListener("ended",()=>{ teardownAudio(); setCap(false,"音声の取り込みが止まりました。もう一度取り込んでください。"); refreshStartBtn(); });
-      setupAudio(); setCap(true,"取り込み中。Discordの音声が聞こえています。"); refreshStartBtn();
+      const at=s.getAudioTracks()[0];
+      // 自動ゲイン調整などが音量を変えるのを防ぐため、取得後に再度オフを試みる
+      try{ await at.applyConstraints({echoCancellation:false,noiseSuppression:false,autoGainControl:false}); }catch(e){}
+      // 実際に適用された設定を確認(自動ゲイン調整が効いていると音量が大きく下がる原因になる)
+      let diag="";
+      try{
+        const st=at.getSettings();
+        const agc=st.autoGainControl, ns=st.noiseSuppression, ec=st.echoCancellation;
+        const onAny = agc===true||ns===true||ec===true;
+        if(onAny){
+          diag=" ⚠ 音声処理が有効（AGC:"+fmtBool(agc)+" / ノイズ抑制:"+fmtBool(ns)+"）。測定値が小さく出る場合があります。";
+        }
+      }catch(e){}
+      at.addEventListener("ended",()=>{ teardownAudio(); setCap(false,"音声の取り込みが止まりました。もう一度取り込んでください。"); refreshStartBtn(); });
+      setupAudio(); setCap(true,"取り込み中。Discordの音声が聞こえています。"+diag); refreshStartBtn();
     }catch(e){ setCap(false,"取り込みをキャンセルしました。"); }
   };
-  function setCap(live,text){ $("capDot").classList.toggle("live",live); $("capText").textContent=text; }
+  function fmtBool(b){ return b===true?"ON":b===false?"OFF":"不明"; }
+  function setCap(live,text){
+    $("capDot").classList.toggle("live",live); $("capText").textContent=text;
+    // チェック画面の状態表示も同期
+    const cd=$("checkCapDot"), ct=$("checkCapText");
+    if(cd){ cd.classList.toggle("live",live); }
+    if(ct){ ct.textContent=live?"取り込み中":"音声なし — 取り込み直してください"; }
+    refreshStartBtn();
+  }
+  // チェック画面からも音声を取り込み直せるように(capBtnと同じ処理)
+  $("capRedoBtn").onclick=()=>$("capBtn").click();
   function setupAudio(){
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     sourceNode=audioCtx.createMediaStreamSource(stream);
-    analyser=audioCtx.createAnalyser(); analyser.fftSize=1024;
+    // 画面共有(getDisplayMedia)の音声はマイク入力より低いレベルで渡されるため、
+    // DAWや一般的なメーター(getUserMedia基準)に合わせてゲインで底上げする。
+    gainNode=audioCtx.createGain();
+    gainNode.gain.value=Math.pow(10, INPUT_GAIN_DB/20);
+    analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
+    analyser.smoothingTimeConstant=0; // 平滑化なし=瞬間値を正確に
     dataArr=new Float32Array(analyser.fftSize);
-    sourceNode.connect(analyser); // destinationには繋がない(ハウリング防止)
+    sourceNode.connect(gainNode);
+    gainNode.connect(analyser); // destinationには繋がない(ハウリング防止)
   }
   function teardownAudio(){
     if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
     if(audioCtx){ audioCtx.close(); audioCtx=null; }
-    analyser=null; sourceNode=null;
+    analyser=null; sourceNode=null; gainNode=null;
   }
 
   // ===== dB計算 =====
@@ -471,21 +655,24 @@
     try{ if(!analyser) return -Infinity; return currentDbfs(); }
     catch(e){ return -Infinity; }
   }
-  // ターン別判定(声の大きさ)
-  function judge(turnNo,db){
-    if(db===null) return {key:"none",label:"声が検出できません",advice:"あなたの声が検出できません。マイクがミュートになっていないか、共有設定を確認してください。",cls:"v-none"};
-    // 両ターン共通の基準: −12以下=小さすぎ / −12〜−6=ちょうどよい / −6超=割れるかも
-    if(db<TH.normalLow){
+  // 声の大きさ判定(相手の声。適正 −15〜−10dB)
+  function judge(db){
+    if(db===null) return {key:"none",label:"声が検出できません",advice:"この人の声が検出できません。マイクがミュートになっていないか、その人の共有・マイク設定を確認してもらってください。",cls:"v-none"};
+    if(db<TH.low){
       return {key:"low",label:"小さすぎかも",
-        advice:"あなたの声が小さめです（−12dBに届いていません）。マイクの音量を上げるか、マイクに少し近づいてみてください。これ以上マイクの音量が上がらない場合は、他の人にDiscord側で音量を上げてもらってください。",
+        advice:"あなたの画面では、この人の声が小さめです（−15dBに届いていません）。他の人の画面でも小さい場合は、本人にマイク音量を上げてもらってください。あなたの画面だけ小さい場合は、あなたのDiscordでこの人の音量を上げましょう。",
         cls:"v-low"};
     }
-    if(db>TH.loudHigh){
-      return {key:"high",label:"大きすぎ（割れるかも）",
-        advice:"あなたの声が大きめです（−6dBを超えています）。マイクの音量を少し下げてください。音割れの原因になります。",
+    if(db>TH.high){
+      // -10超〜-6は許容寄り、-6超は割れ警戒
+      const clip = db>-6;
+      return {key:"high",label: clip?"大きすぎ（割れるかも）":"少し大きめ",
+        advice: clip
+          ? "この人の声が大きく、−6dBを超えています。音割れの原因になるので、本人にマイク音量を下げてもらうか、あなたのDiscordでこの人の音量を下げましょう。"
+          : "この人の声はやや大きめです（−10dBより上）。気になる場合は、あなたのDiscordでこの人の音量を少し下げると、自分の声とのバランスが取りやすくなります。",
         cls:"v-high"};
     }
-    return {key:"ok",label:"ちょうどよい",advice:"あなたの声はちょうどよい大きさです（−12〜−6dBに収まっています）。",cls:"v-ok"};
+    return {key:"ok",label:"ちょうどよい",advice:"この人の声はちょうどよい大きさです（−15〜−10dBに収まっています）。自分の声を主役にしたとき、聞きやすいバランスです。",cls:"v-ok"};
   }
   // ノイズフロア判定
   function judgeNoise(db){
@@ -497,9 +684,9 @@
 
   // ===== 進行 =====
   $("startBtn").onclick=()=>{
-    members=currentNames().map(n=>({name:n,normalDb:null,loudDb:null,normalPeak:null,loudPeak:null,noiseDb:null,status:"pending"}));
-    activeIdx=-1; $("setup").classList.add("hidden"); $("check").classList.remove("hidden"); renderRoster();
-    buildZones();
+    members=currentNames().map(n=>({name:n,normalDb:null,normalPeak:null,noiseDb:null,status:"pending"}));
+    activeIdx=-1; $("setup").classList.add("hidden"); $("check").classList.remove("hidden");
+    renderTopics(); renderRoster(); buildZones();
   };
 
   function buildZones(){
@@ -509,9 +696,9 @@
       d.style.flex=`0 0 ${(to-from)/(METER_MAX-METER_MIN)*100}%`;
       d.style.background=color; return d;
     };
-    z.appendChild(seg(METER_MIN,TH.normalLow,"rgba(240,180,65,.06)"));
-    z.appendChild(seg(TH.normalLow,TH.loudHigh,"rgba(84,214,160,.10)"));
-    const last=seg(TH.loudHigh,METER_MAX,"rgba(239,106,106,.07)"); last.style.flex="1"; z.appendChild(last);
+    z.appendChild(seg(METER_MIN,TH.low,"rgba(240,180,65,.06)"));
+    z.appendChild(seg(TH.low,TH.high,"rgba(84,214,160,.10)"));
+    const last=seg(TH.high,METER_MAX,"rgba(239,106,106,.07)"); last.style.flex="1"; z.appendChild(last);
     // 目盛りラベルを実際のdB位置(pct)に配置。バーと同じ座標系なので整合する。
     const sc=$("meterScale"); sc.innerHTML="";
     const label=(text,db,edge)=>{
@@ -521,9 +708,20 @@
       sc.appendChild(s);
     };
     label("静か",METER_MIN,"l");
-    label("−12",TH.normalLow);
-    label("−6",TH.loudHigh);
+    label("−15",TH.low);
+    label("−10",TH.high);
     label("0",METER_MAX,"r");
+  }
+
+  function renderTopics(){
+    const list=$("topicList"); list.innerHTML="";
+    // 未選択なら最初のお題を自動選択
+    if(!currentTopic) currentTopic=TOPICS[0];
+    TOPICS.forEach(t=>{
+      const b=document.createElement("button"); b.className="topic-chip"+(currentTopic===t?" selected":"");
+      b.textContent=t; b.onclick=()=>{ currentTopic=t; renderTopics(); };
+      list.appendChild(b);
+    });
   }
 
   function renderRoster(){
@@ -535,18 +733,17 @@
       const left=document.createElement("div"); left.className="m-left";
       const name=document.createElement("div"); name.className="m-name"; name.textContent=m.name;
       if(m.status==="done"){
-        const st=memberStatus(m.normalDb,m.loudDb);
+        const st=memberStatus(m.normalDb);
         const mk=document.createElement("span"); mk.className="m-mark "+st.cls; mk.textContent=st.mark+" "+st.label; name.appendChild(mk);
       }
       left.appendChild(name);
 
       // 完了者: 結果値とピークを表示
       if(m.status==="done"){
-        const n=judge(1,m.normalDb), l=judge(2,m.loudDb);
+        const n=judge(m.normalDb);
         const res=document.createElement("div"); res.className="m-result";
         res.innerHTML=
-          `<span class="m-chip">普段 <b class="${n.cls}">${fmtDb(m.normalDb)}</b> <span class="m-peak">ピーク ${fmtDb(m.normalPeak)}</span></span>`+
-          `<span class="m-chip">大きめ <b class="${l.cls}">${fmtDb(m.loudDb)}</b> <span class="m-peak">ピーク ${fmtDb(m.loudPeak)}</span></span>`;
+          `<span class="m-chip"><b class="${n.cls}">${fmtDb(m.normalDb)}</b> <span class="m-peak">ピーク ${fmtDb(m.normalPeak)}</span></span>`;
         left.appendChild(res);
         // 配信者向け: 調整が必要なときだけ案内を出す
         const g=hostGuide(m.normalDb);
@@ -574,23 +771,16 @@
   function fmtDb(db){ return (db===null||db===undefined)?"—":Math.round(db)+"dB"; }
 
   // メンバーの総合ステータス(普段・大きめ両方を見て一番重い問題を採用)
-  function memberStatus(normalDb,loudDb){
-    const k=db=>judge(1,db).key;
-    const k1=k(normalDb), k2=k(loudDb);
-    if(k1==="none"||k2==="none") return {label:"音声未検出",cls:"bad",mark:"✕"};
-    const low=(k1==="low"||k2==="low"), high=(k1==="high"||k2==="high");
-    if(low||high){
-      const issues=[];
-      if(low) issues.push("小さい");
-      if(high) issues.push("大きい");
-      return {label:"要調整（"+issues.join("・")+"）",cls:"warn",mark:"⚠"};
-    }
+  function memberStatus(normalDb){
+    const k=judge(normalDb).key;
+    if(k==="none") return {label:"音声未検出",cls:"bad",mark:"✕"};
+    if(k==="low"||k==="high") return {label:"要調整",cls:"warn",mark:"⚠"};
     return {label:"OK",cls:"ok",mark:"✓"};
   }
 
   // 配信者向け: その人のDiscord個別音量をどう動かすかの案内。
   // 普段の声(normalDb)を基準に、適正帯の中央(-9dB)へ寄せる方向と度合いを返す。
-  const TARGET=(TH.normalLow+TH.loudHigh)/2; // -9dB
+  const TARGET=(TH.low+TH.high)/2; // -9dB
   function hostGuide(normalDb){
     if(normalDb===null||normalDb===undefined) return {need:true,cls:"bad",text:"音声が取れていません。この人のマイク・共有設定を確認してください"};
     const diff=normalDb-TARGET;
@@ -599,6 +789,30 @@
     const dir=diff<0?"上げる":"下げる";
     const amount=adb<=6?"少し":adb<=12?"しっかり":"大きく";
     return {need:true,cls:"warn",text:`Discordの個別音量を${amount}${dir}（目安 約${adb}dB）`};
+  }
+
+  // 全体のレベル感: 全員の普段の声の平均と、全員が適正帯に収まっているか
+  function overallLevel(memberList){
+    const valid=memberList.filter(m=>m.normalDb!==null&&isFinite(m.normalDb));
+    if(valid.length<2) return null;
+    const dbs=valid.map(m=>m.normalDb);
+    const avg=dbs.reduce((a,b)=>a+b,0)/dbs.length;
+    const allInRange=dbs.every(d=>d>=TH.low&&d<=TH.high);
+    const maxDb=Math.max(...dbs), minDb=Math.min(...dbs);
+    const spread=maxDb-minDb;
+    // 飛び出し検出: spreadが4dB以上なら、平均から最も離れている人を特定
+    let outliers=[];
+    if(spread>=4){
+      valid.forEach(m=>{
+        const diff=m.normalDb-avg;
+        if(Math.abs(diff)>=spread*0.35){
+          outliers.push({name:m.name, db:m.normalDb, diff:Math.round(diff), dir:diff>0?"大きい":"小さい"});
+        }
+      });
+      // 差が大きい順にソート
+      outliers.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
+    }
+    return {avg, allInRange, spread, maxDb, minDb, outliers};
   }
 
   function removeMember(i){
@@ -614,25 +828,27 @@
   }
 
   function startMember(i){
-    activeIdx=i; turn=1; members[i].normalDb=null; members[i].loudDb=null; members[i].noiseDb=null;
+    activeIdx=i; members[i].normalDb=null; members[i].noiseDb=null;
     renderRoster();
     $("measure").classList.remove("hidden");
+    $("measure").classList.add("fullscreen"); // 測定中は全画面で特大表示
+    document.body.classList.add("measuring-active");
     $("mWho").textContent=members[i].name;
-    $("measure").scrollIntoView({behavior:"smooth",block:"center"});
     setupTurn();
+  }
+  // 測定オーバーレイを閉じる(ロスターに戻る)
+  function exitFullscreen(){
+    $("measure").classList.remove("fullscreen");
+    document.body.classList.remove("measuring-active");
   }
 
   function setupTurn(){
-    $("pip1").className="turn-pip"+(turn===1?" cur":(members[activeIdx].normalDb!==null?" cleared":""));
-    $("pip2").className="turn-pip"+(turn===2?" cur":"");
-    const isNormal=turn===1;
-    $("vMode").textContent=isNormal?"① いつも通りの声で":"② 少し大きめの声で";
-    $("vMode").className="voice-mode "+(isNormal?"normal":"loud");
-    $("scriptBox").className="script-box"+(isNormal?"":" loud");
-    const pool=isNormal?SCRIPTS_NORMAL:SCRIPTS_LOUD;
-    $("scriptText").textContent=pool[Math.floor(Math.random()*pool.length)];
-    // 両ターン共通: 適正帯は −12〜−6。ターゲット線は帯の中央に置き、目安を示す。
-    const tgt=(TH.normalLow+TH.loudHigh)/2;
+    $("vMode").textContent="いつも通りの声で話してください";
+    $("vMode").className="voice-mode normal";
+    $("scriptBox").className="script-box";
+    $("scriptText").textContent = TOPIC_TEMPLATE(currentTopic);
+    // 適正帯 −15〜−10 の中央を目安線に
+    const tgt=(TH.low+TH.high)/2;
     $("meterTarget").style.left=pct(tgt)+"%";
     $("targetCap").textContent="このあたりが目安";
     startSequence();
@@ -643,10 +859,11 @@
     // AudioContextがsuspendedなら再開(ユーザー操作起点で許可される)
     if(audioCtx && audioCtx.state==="suspended"){ audioCtx.resume().catch(()=>{}); }
     cancelAnimationFrame(rafId); clearTimeout(phaseTimer);
-    barLevel=-100; turnPeak=-100; speakTrail=[]; noiseSamples=[]; measuredNoiseDb=null;
+    barLevel=-100; barHeldFor=0; turnPeak=-100; speakTrail=[]; noiseSamples=[]; measuredNoiseDb=null;
     $("rDb").textContent="—"; $("rVerdict").textContent="—"; $("rVerdict").className="verdict";
     $("rAdvice").textContent=""; $("noiseLine").textContent=""; $("nextBtn").disabled=true;
     $("meterFill").style.width="0%";
+    { const tr=$("measureTrouble"); if(tr){ tr.style.display="none"; tr.open=false; } }
     enterPhase("count");
     rafId=requestAnimationFrame(tick);
   }
@@ -655,14 +872,32 @@
     phase=p; phaseStart=performance.now();
     const big=$("phaseBig"), sub=$("phaseSub");
     big.className="phase-big";
-    if(p==="count"){ big.textContent="3"; sub.textContent="読み上げの準備をしてください"; $("scriptBox").style.opacity=".5"; }
-    else if(p==="silence"){ big.classList.add("silence"); big.textContent="🤫"; sub.textContent="そのまま 黙って ください（ノイズを測ります）"; $("scriptBox").style.opacity=".5"; }
-    else if(p==="speak"){ big.classList.add("speak"); big.textContent="🎤"; sub.textContent="文章を読み上げてください"; $("scriptBox").style.opacity="1"; }
+    if(p==="count"){
+      big.textContent="3";
+      sub.innerHTML='まず<b style="color:var(--accent)">3秒だけ黙って</b>、そのあと<b style="color:var(--low)">文を読み上げます</b>';
+      $("scriptBox").style.opacity="1"; // お題はカウント中から見せておく(気づきやすく)
+    }
+    else if(p==="silence"){
+      big.classList.add("silence"); big.textContent="🤫";
+      sub.innerHTML='<b style="color:var(--accent)">まだ話さないで！</b> 静かに（ノイズを測っています）';
+      $("scriptBox").style.opacity=".55";
+    }
+    else if(p==="speak"){
+      big.classList.add("speak"); big.textContent="🎤";
+      sub.innerHTML='<b style="color:var(--low)">今です！〇〇に答えを入れて読んで！</b>';
+      $("scriptBox").style.opacity="1";
+    }
     // popアニメ再適用
     big.classList.remove("phase-pop"); void big.offsetWidth; big.classList.add("phase-pop");
   }
 
   const decayPerFrame=()=> DECAY_PER_SEC/60; // 概算(60fps)
+  const HOLD_FRAMES=()=> Math.floor(HOLD_SEC*60);
+  // DAW風ピークホールド: ピーク到達で即上昇＆保持リセット、保持時間後に緩減衰
+  function updateBarLevel(db){
+    if(isFinite(db)&&db>=barLevel){ barLevel=db; barHeldFor=0; }
+    else { barHeldFor++; if(barHeldFor>HOLD_FRAMES()) barLevel=Math.max(isFinite(db)?db:-100, barLevel-decayPerFrame()); }
+  }
   function tick(){
     if(phase==="result"||phase==="idle") return; // 測定外はバーに触れない
     const now=performance.now();
@@ -681,24 +916,23 @@
     else if(phase==="silence"){
       const db=safeDbfs();
       noiseSamples.push(db);
-      if(isFinite(db)&&db>barLevel) barLevel=db; else barLevel=Math.max(isFinite(db)?db:-100, barLevel-decayPerFrame());
+      updateBarLevel(db);
       $("meterFill").style.width=pct(barLevel)+"%"; colorMeter(barLevel);
       const remain=Math.max(0,Math.ceil((PH.silence-elapsed)/1000));
       $("phaseSub").textContent=`そのまま黙ってください（あと ${remain} 秒）`;
-      if(elapsed>=PH.silence){ measuredNoiseDb=computeNoiseFloor(noiseSamples); barLevel=-100; enterPhase("speak"); }
+      if(elapsed>=PH.silence){ measuredNoiseDb=computeNoiseFloor(noiseSamples); barLevel=-100; barHeldFor=0; enterPhase("speak"); }
     }
     else if(phase==="speak"){
       const db=safeDbfs();
       if(isFinite(db)&&db>turnPeak) turnPeak=db; // 瞬間ピーク記録
-      // ピークホールド: barLevelが唯一の真実
-      if(isFinite(db)&&db>barLevel) barLevel=db; else barLevel=Math.max(isFinite(db)?db:-100, barLevel-decayPerFrame());
+      updateBarLevel(db);
       $("meterFill").style.width=pct(barLevel)+"%"; colorMeter(barLevel);
       // 測定中は数字を出さない(確定値は完了時に表示。途中の瞬間値で誤解させない)
       $("rDb").textContent="測定中…"; $("rDb").classList.add("measuring");
       $("rVerdict").textContent=""; $("rVerdict").className="verdict";
       speakTrail.push(barLevel); // バー位置を記録
       const remain=Math.max(0,Math.ceil((PH.speak-elapsed)/1000));
-      $("phaseSub").textContent=`読み上げを続けてください（あと ${remain} 秒）`;
+      $("phaseSub").textContent=`そのまま話し続けてください（あと ${remain} 秒）`;
       if(elapsed>=PH.speak){ finishTurn(); return; }
     }
     rafId=requestAnimationFrame(tick);
@@ -710,14 +944,14 @@
     v.sort((a,b)=>a-b); return v[Math.floor(v.length*0.75)];
   }
   // 発話のバー軌跡から代表値を算出。
-  // バーが実際に到達・保持していた「声の高さ」を表すため、上側の平均をとる。
-  // これをバーにも数字にも使うので、両者は必ず一致する。
+  // DAWのピークホールドと同じ思想で「発声中に到達して維持されたピークレベル」を代表とする。
+  // 黙っている時間を含めた平均ではなく、声がしっかり出ているときの高さを見る。
   function speechLevelFromTrail(trail){
     const back=trail.filter(d=>isFinite(d)&&d>-90);
     if(back.length<5) return null;
     back.sort((a,b)=>b-a); // 降順
-    // 上位40%の平均 = 声がしっかり出ている区間の代表。拍間の谷に引っ張られない。
-    const top=back.slice(0,Math.max(1,Math.floor(back.length*0.4)));
+    // 上位10%の平均 ≒ 発声中のピーク維持値。瞬間の最大ノイズ1点には偏らず、DAWのピーク表示に近い。
+    const top=back.slice(0,Math.max(1,Math.floor(back.length*0.1)));
     return top.reduce((a,b)=>a+b,0)/top.length;
   }
 
@@ -735,22 +969,21 @@
       $("meterFill").style.width="0%";
       $("rDb").textContent="—";
     }
-    const res=judge(turn,db);
+    const res=judge(db);
     $("rVerdict").textContent=res.label; $("rVerdict").className="verdict "+res.cls;
     $("rAdvice").textContent=res.advice;
-    if(turn===1){
-      members[activeIdx].noiseDb=measuredNoiseDb;
-      const nz=judgeNoise(measuredNoiseDb);
-      $("noiseLine").innerHTML=`静寂時のノイズ: <span class="${nz.cls}">${measuredNoiseDb===null?"—":Math.round(measuredNoiseDb)+"dB"} ・ ${nz.label}</span>`;
-    } else {
-      $("noiseLine").textContent="";
-    }
-    if(turn===1){ members[activeIdx].normalDb=db; members[activeIdx].normalPeak=(turnPeak>-100?turnPeak:null); }
-    else { members[activeIdx].loudDb=db; members[activeIdx].loudPeak=(turnPeak>-100?turnPeak:null); }
+    members[activeIdx].noiseDb=measuredNoiseDb;
+    const nz=judgeNoise(measuredNoiseDb);
+    $("noiseLine").innerHTML=`静寂時のノイズ: <span class="${nz.cls}">${measuredNoiseDb===null?"—":Math.round(measuredNoiseDb)+"dB"} ・ ${nz.label}</span>`;
+    members[activeIdx].normalDb=db; members[activeIdx].normalPeak=(turnPeak>-100?turnPeak:null);
     $("phaseSub").textContent="測定完了";
     $("phaseBig").textContent="✓"; $("phaseBig").className="phase-big go phase-pop";
-    $("nextBtn").textContent = turn===1 ? "次：大きめの声へ ▶" : "OK、この人は完了";
+    $("nextBtn").textContent="OK、この人は完了";
     $("nextBtn").disabled=false;
+    // 適正でない結果のときだけ、対処のチャートを出す(自分だけ違う場合の判断材料)
+    const tr=$("measureTrouble");
+    if(res.key==="low"||res.key==="high"||res.key==="none"){ tr.style.display=""; }
+    else { tr.style.display="none"; tr.open=false; }
   }
 
   $("reMeasure").onclick=()=>{ if(activeIdx>=0) startSequence(); };
@@ -758,24 +991,17 @@
   $("backBtn").onclick=()=>{
     if(activeIdx<0) return;
     cancelAnimationFrame(rafId);
-    if(turn===2){
-      // 大きめの声 → 普段の声に戻ってやり直し
-      turn=1; setupTurn(); $("measure").scrollIntoView({behavior:"smooth",block:"center"});
-    }else{
-      // 普段の声 → この人の測定をやめてロスターへ戻る
-      phase="idle";
-      $("measure").classList.add("hidden");
-      activeIdx=-1; renderRoster();
-      $("check").scrollIntoView({behavior:"smooth",block:"start"});
-    }
+    phase="idle";
+    $("measure").classList.add("hidden"); exitFullscreen();
+    activeIdx=-1; renderRoster();
+    $("check").scrollIntoView({behavior:"smooth",block:"start"});
   };
 
   $("nextBtn").onclick=()=>{
     if(activeIdx<0) return;
-    if(turn===1){ turn=2; setupTurn(); $("measure").scrollIntoView({behavior:"smooth",block:"center"}); return; }
-    // turn2完了 → この人を完了に
+    // 1ターンで完了
     members[activeIdx].status="done";
-    $("measure").classList.add("hidden");
+    $("measure").classList.add("hidden"); exitFullscreen();
     activeIdx=-1; renderRoster();
     if(members.every(m=>m.status==="done")) showDone();
     else{ const next=members.findIndex(m=>m.status==="pending"); if(next>=0) rosterBox.children[next].scrollIntoView({behavior:"smooth",block:"center"}); }
@@ -797,9 +1023,33 @@
       hs.innerHTML=`<div class="hs-title">配信者へ：個別音量の調整がおすすめの人</div><div class="hs-note">配信に全員の声をきれいに乗せるため、Discordで各メンバーを右クリック→音量で調整してください。</div>${rows}`;
     }
 
+    // 全体のレベル感の総括 + 飛び出し検出
+    const ov=overallLevel(members);
+    if(ov){
+      let parts=[];
+      // 1. バラつき判定(揃えるの核心)
+      if(ov.spread<3){
+        parts.push(`<div class="ov-row ov-ok">✓ 全員の声がよく揃っています（差 ${Math.round(ov.spread)}dB）。</div>`);
+      }else if(ov.outliers.length>0){
+        const names=ov.outliers.map(o=>`<b>${escapeHtml(o.name)}</b>（他の人より${o.dir}）`).join("、");
+        parts.push(`<div class="ov-row ov-warn">⚠ ${names} が他の人と差があります（全体の差 ${Math.round(ov.spread)}dB）。Discordの個別音量で調整すると揃います。</div>`);
+      }
+      // 2. 全体レベル感
+      if(!ov.allInRange){
+        parts.push(`<div class="ov-row ov-info">まずは上の「要調整」の人をそろえましょう。</div>`);
+      }else if(ov.avg < TH.low+2){
+        parts.push(`<div class="ov-row ov-info">全体的にやや小さめです。配信に乗せるときは、OBS側でDiscord全体の音量を少し上げると聞きやすくなります。</div>`);
+      }
+      // 3. OBSでの全体調整の案内(常に出す)
+      parts.push(`<div class="ov-row ov-tip">💡 声が揃ったら、あとはOBSで「自分の声が一番大きく、コラボ相手はそれより少し小さく」なるよう全体を調整すると、リスナーが聞きやすい配信になります。</div>`);
+      const ovEl=document.createElement("div"); ovEl.className="overall";
+      ovEl.innerHTML=`<div class="ov-title">こえそろえの結果</div>${parts.join("")}`;
+      hs.appendChild(ovEl);
+    }
+
     const list=$("doneList"); list.innerHTML="";
     members.forEach((m,idx)=>{
-      const n=judge(1,m.normalDb), l=judge(2,m.loudDb), nz=judgeNoise(m.noiseDb), st=memberStatus(m.normalDb,m.loudDb);
+      const n=judge(m.normalDb), nz=judgeNoise(m.noiseDb), st=memberStatus(m.normalDb);
       const row=document.createElement("div"); row.className="dn-row";
 
       // 上段: 名前+総合ステータス+再チェックボタン
@@ -810,16 +1060,10 @@
       head.appendChild(recheck);
       row.appendChild(head);
 
-      // 下段: 普段/大きめの2行 + ノイズ
+      // 下段: 測定値 + ノイズ
       const body=document.createElement("div"); body.className="dn-body";
-      const line=(label,db,r,peak)=>
-        `<div class="dn-line"><span class="dn-line-label">${label}</span>`+
-        `<span class="dn-line-val ${r.cls}">${fmtDb(db)}</span>`+
-        `<span class="dn-line-judge ${r.cls}">${r.label}</span>`+
-        `<span class="dn-line-peak">ピーク ${fmtDb(peak)}</span></div>`;
       body.innerHTML=
-        line("普段の声", m.normalDb, n, m.normalPeak)+
-        line("大きめ",  m.loudDb,   l, m.loudPeak)+
+        `<div class="dn-line"><span class="dn-line-label">音量</span><span class="dn-line-val ${n.cls}">${fmtDb(m.normalDb)}</span><span class="dn-line-judge ${n.cls}">${n.label}</span><span class="dn-line-peak">ピーク ${fmtDb(m.normalPeak)}</span></div>`+
         `<div class="dn-line"><span class="dn-line-label">ノイズ</span><span class="dn-line-val ${nz.cls}">${m.noiseDb===null?"—":Math.round(m.noiseDb)+"dB"}</span><span class="dn-line-judge ${nz.cls}">${nz.label}</span></div>`;
       row.appendChild(body);
       list.appendChild(row);
@@ -828,6 +1072,7 @@
 
   // 完了画面から1人だけ再チェック: チェック画面に戻すだけ(開始ボタンは本人が押す)
   function recheckOne(i){
+    exitFullscreen();
     $("done").classList.add("hidden");
     $("check").classList.remove("hidden");
     activeIdx=-1;
@@ -840,7 +1085,7 @@
   function addMemberPrompt(fromDone){
     const name=prompt("追加するメンバーの名前を入力してください");
     if(!(name && name.trim())) return;
-    members.push({name:name.trim(),normalDb:null,loudDb:null,normalPeak:null,loudPeak:null,noiseDb:null,status:"pending"});
+    members.push({name:name.trim(),normalDb:null,normalPeak:null,noiseDb:null,status:"pending"});
     const newIdx=members.length-1;
     // 完了画面から追加した場合はチェック画面に戻す(新メンバーは未測定なので)
     $("done").classList.add("hidden");
@@ -854,7 +1099,7 @@
   $("addMemberDone").onclick=()=>addMemberPrompt(true);
 
   $("resetBtn").onclick=()=>{
-    members.forEach(m=>{m.status="pending";m.normalDb=null;m.loudDb=null;m.normalPeak=null;m.loudPeak=null;m.noiseDb=null;});
+    members.forEach(m=>{m.status="pending";m.normalDb=null;m.normalPeak=null;m.noiseDb=null;});
     $("done").classList.add("hidden"); $("check").classList.remove("hidden"); activeIdx=-1; renderRoster();
   };
 
@@ -862,8 +1107,8 @@
   function pct(db){ if(db===-Infinity||db===null) return 0; const p=(db-METER_MIN)/(METER_MAX-METER_MIN)*100; return Math.max(0,Math.min(100,p)); }
   function colorMeter(db){
     const f=$("meterFill"); let c1,c2;
-    if(db<TH.normalLow){ c1="#caa23a"; c2="var(--low)"; }
-    else if(db<=TH.loudHigh){ c1="#3aa"; c2="var(--ok)"; }
+    if(db<TH.low){ c1="#caa23a"; c2="var(--low)"; }
+    else if(db<=TH.high){ c1="#3aa"; c2="var(--ok)"; }
     else{ c1="#c25"; c2="var(--high)"; }
     f.style.background=`linear-gradient(90deg,${c1},${c2})`;
   }
